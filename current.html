@@ -7,41 +7,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root{--bg:#ffffff;--fg:#000000;--muted:#6f6f6f;--border:#e5e5e5;}
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:"Inter",sans-serif;background:var(--bg);color:var(--fg);line-height:1.75;}
-    .container{width:100%;max-width:900px;margin:0 auto;padding:0 1.5rem;}
-    header{padding:1rem 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
-    a{text-decoration:none;color:var(--fg);}a:hover{text-decoration:underline;}
-    h1{font-size:clamp(2.25rem,6vw,3rem);font-weight:800;margin:2rem 0 1rem;}
-    h2{font-size:1.35rem;margin:2.5rem 0 1rem;}
-    .tag{display:inline-block;border:1px solid var(--border);padding:.25rem .55rem;border-radius:4px;font-size:.75rem;color:var(--muted);margin-right:.4rem;}
-    .back{display:inline-flex;align-items:center;gap:.4rem;font-size:.9rem;}
-    .back svg{width:16px;height:16px;stroke:currentColor;}
-    footer{text-align:center;padding:2rem 0 3rem;border-top:1px solid var(--border);font-size:.85rem;color:var(--muted);}
-    ul{list-style:none inside;}
-    section{margin-bottom:2.75rem;}
-    /* Icon styling */
-    .icon-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .icon-link i {
-      width: 20px;
-      text-align: center;
-      color: var(--fg);
-      opacity: 0.8;
-    }
-    li i {
-      width: 24px;
-      text-align: center;
-      margin-right: 8px;
-      color: var(--fg);
-      opacity: 0.8;
-    }
-  </style>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/current.css">
 </head>
 <body>
   <div class="container">
@@ -59,8 +26,8 @@
 
       <section>
         <h2>Quick Access</h2>
-        <p><a href="Reinforcement-Learning-Theory.pdf" target="_blank" rel="noopener" class="icon-link"><i class="fas fa-file-pdf"></i> View my study notes (PDF)</a></p>
-        <p><a href="Bakalarska_prace_pitch_v2.pdf" target="_blank" rel="noopener" class="icon-link"><i class="fas fa-file-powerpoint"></i> (Unofficial) Thesis pitch (PDF)</a></p>
+        <p><a href="pdfs/Reinforcement-Learning-Theory.pdf" target="_blank" rel="noopener" class="icon-link"><i class="fas fa-file-pdf"></i> View my study notes (PDF)</a></p>
+        <p><a href="pdfs/Bakalarska_prace_pitch_v2.pdf" target="_blank" rel="noopener" class="icon-link"><i class="fas fa-file-powerpoint"></i> (Unofficial) Thesis pitch (PDF)</a></p>
       </section>
 
       <section>
@@ -100,12 +67,14 @@
         <p style="margin-top:1.2em;"><strong>Goal:</strong> By the end of the summer, I aim to:</p>
         <p style="margin-top:1.2em;">
           Ensure a strong foundation for my research and implementation work by studying not only the fundamentals of reinforcement learning but also the core principles of machine learning and deep learning before the semester begins.
-        </p></p>
+        </p>
       </section>
     </main>
 
     <footer>© <span id="year"></span> Martin Ševčík — All rights reserved.</footer>
   </div>
-  <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
+
+  <!-- Scripts -->
+  <script src="js/main.js"></script>
 </body>
 </html>

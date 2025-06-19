@@ -7,314 +7,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root {
-      --bg: #ffffff;
-      --fg: #000000;
-      --muted: #6f6f6f;
-      --border: #e5e5e5;
-      --chip-bg: #f3f3f3;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--fg); line-height: 1.75; }
-
-    /* Utilities */
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
-    .section { padding: 4.5rem 0; border-bottom: 1px solid var(--border); }
-    .overline { text-transform: uppercase; font-size: .75rem; letter-spacing: .15em; color: var(--muted); margin-bottom: .5rem; }
-    .sm-title { text-transform: uppercase; font-size: .8rem; letter-spacing: .1em; color: var(--muted); margin-bottom: .75rem; }
-    .reveal { opacity: 0; transform: translateY(40px); transition: all .6s ease-out; }
-    .show { opacity: 1; transform: translateY(0); }
-
-    /* Header */
-    header { position: sticky; top: 0; z-index: 1000; background: var(--bg); border-bottom: 1px solid var(--border); }
-    nav { display: flex; justify-content: space-between; align-items: center; height: 60px; }
-    nav .brand {
-      font-size: 1.35rem;
-      font-weight: 800;
-      text-decoration: none;
-      color: var(--fg);
-      position: relative;
-    }
-
-    nav .brand::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: -3px;
-      width: 0;
-      height: 1px;
-      background: var(--fg);
-      transition: width .25s;
-    }
-
-    nav .brand:hover::after {
-      width: 100%;
-    }
-
-    nav ul { list-style: none; display: flex; gap: 1.25rem; }
-    nav a { text-decoration: none; color: var(--fg); font-weight: 500; position: relative; }
-    nav a::after { content: ''; position: absolute; left: 0; bottom: -3px; width: 0; height: 1px; background: var(--fg); transition: width .25s; }
-    nav a:hover::after { width: 100%; }
-    .menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; }
-    @media (max-width: 680px) {
-      /* Fix for mobile navigation */
-      body {
-        overflow-x: hidden; /* Prevent horizontal scrolling */
-        position: relative; /* Create positioning context */
-      }
-      
-      nav ul {
-        position: fixed; /* Change from absolute to fixed */
-        top: 60px;
-        right: 0;
-        background: var(--bg);
-        width: 220px;
-        height: calc(100vh - 60px); /* Full height minus header */
-        padding: 1rem 1.5rem;
-        border-left: 1px solid var(--border);
-        border-bottom: 1px solid var(--border);
-        transform: translateX(100%); /* Start fully off-screen */
-        transition: transform .25s ease;
-        flex-direction: column;
-        z-index: 999; /* Ensure it's above other content */
-        box-shadow: -5px 0 15px rgba(0,0,0,0.1); /* Optional: add shadow */
-      }
-      
-      nav ul.open {
-        transform: translateX(0);
-      }
-      
-      .menu-toggle {
-        display: block;
-        z-index: 1000; /* Ensure it's above the nav menu */
-      }
-    }
-
-    /* Hero */
-    .hero { padding: 6rem 0 5rem; }
-.hero-grid { 
-  display: block; /* Change from grid to block to remove the extra space */
-  max-width: 800px; /* Limit width for better readability */
-}
-@media (min-width: 860px) { 
-  .hero-grid {
-    /* Remove the second empty column that was causing the stretch */
-    grid-template-columns: 1fr; 
-  }
-}
-    .hero h1 { font-size: clamp(3rem, 8vw, 4.25rem); font-weight: 800; line-height: 1.05; margin-bottom: 1rem; }
-    .tagline { font-size: 1.1rem; color: var(--muted); margin-bottom: 1.75rem; }
-    .cta-row { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .btn-outline { display: inline-flex; align-items: center; gap: .55rem; padding: .6rem 1.25rem; font-size: .9rem; border: 1px solid var(--fg); border-radius: 6px; text-decoration: none; color: var(--fg); transition: background .2s, color .2s; }
-    .btn-outline:hover { background: var(--fg); color: var(--bg); }
-    .btn-outline svg { width: 18px; height: 18px; stroke: currentColor; }
-    .hero-illus { max-width: 100%; height: auto; opacity: .8; }
-
-    /* Info grid */
-    .info-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 2.5rem; }
-
-    /* Projects */
-    .projects-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 1.75rem; }
-    .project-card { position: relative; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; min-height: 100%; background: var(--bg); transition: transform .25s, box-shadow .25s; }
-    .project-card:hover { transform: translateY(-6px); box-shadow: 0 8px 20px rgba(0,0,0,.06); }
-    .card-link { position: absolute; inset: 0; z-index: 1; }
-    .project-img { width: 100%; height: 160px; object-fit: cover; background: #f2f2f2; }
-    .project-body { padding: 1.25rem 1.25rem 3.25rem; flex-grow: 1; }
-    .project-body h3 { font-size: 1.1rem; margin-bottom: .5rem; }
-    .project-body p { font-size: .9rem; margin-bottom: .75rem; }
-    .tags { list-style: none; display: flex; flex-wrap: wrap; gap: .4rem; }
-    .tags li { background: var(--chip-bg); padding: .25rem .8rem; border-radius: 9999px; font-size: .7rem; color: var(--fg); border: 1px solid var(--border); }
-    .repo-icon { position: absolute; right: .8rem; bottom: .8rem; z-index: 2; }
-    .repo-icon svg { width: 24px; height: 24px; stroke: var(--muted); transition: stroke .2s, transform .2s; }
-    .project-card:hover .repo-icon svg { stroke: var(--fg); transform: translateX(2px); }
-    .repo-icon i {
-      font-size: 24px;
-      color: var(--muted);
-      transition: color .2s, transform .2s;
-    }
-    .project-card:hover .repo-icon i {
-      color: var(--fg);
-      transform: translateX(2px);
-    }
-    .more-projects { text-align: center; margin-top: 2.5rem; }
-
-    /* Current work */
-    .current-box { border: 1px solid var(--border); padding: 1.75rem; border-radius: 12px; margin: 0; text-align: center; }
-    .see-more { display: inline-flex; align-items: center; gap: .4rem; font-size: .85rem; font-weight: 500; text-decoration: none; margin-top: 1.25rem; color: var(--fg); }
-    .see-more svg { width: 16px; height: 16px; stroke: currentColor; transition: transform .2s ease; }
-    .see-more:hover svg { transform: translateX(3px); }
-
-    /* Contact */
-    .contact-buttons { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: .75rem; justify-content: center; position: relative;}
-    .icon-btn { display: inline-flex; align-items: center; gap: .5rem; padding: .55rem 1rem; font-size: .9rem; border: 1px solid var(--fg); border-radius: 6px; text-decoration: none; color: var(--fg); transition: background .2s, color .2s; }
-    .icon-btn:hover { background: var(--fg); color: var(--bg); }
-    .icon-btn svg { width: 18px; height: 18px; stroke: currentColor; }
-
-    footer { text-align: center; padding: 2rem 0 4rem; font-size: .85rem; color: var(--muted); }
-    /* Highlight animation */
-    @keyframes bubblyHighlight {
-      0% { transform: scale(1); color: var(--muted); }
-      50% { transform: scale(1.1); color: var(--fg); }
-      100% { transform: scale(1); color: var(--muted); }
-    }
-    .sm-title.highlighted {
-      animation: bubblyHighlight 0.8s ease-in-out forwards;
-      display: inline-block;
-    }
-
-    /* Modal styles update */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: none;
-  z-index: 1100;
-  background-color: transparent;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem; /* Add padding around the modal */
-}
-
-.modal .modal-content {
-  position: relative;
-  background-color: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.5rem;
-  width: 90%;
-  max-width: 460px;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  box-shadow: 0  2px rgba(0, 0, 0, 0.1);
-  margin: auto; /* Center the modal */
-  overflow-y: auto; /* Allow scrolling if needed */
-  max-height: 90vh; /* Prevent modal from being taller than viewport */
-}
-
-/* Mobile-specific adjustments */
-@media (max-width: 480px) {
-  .modal .modal-content {
-    padding: 1.25rem;
-    width: 95%;
-  }
-  
-  .close-modal {
-    top: 1rem;
-    right: 1rem;
-    padding: 0.5rem; /* Larger touch target */
-  }
-  
-  .modal-actions {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  
-  .modal-btn, .copy-btn {
-    padding: 0.75rem 1rem;
-    width: 100%; /* Full width buttons on mobile */
-  }
-  
-  /* Ensure email address doesn't overflow */
-  .modal p {
-    word-break: break-word;
-  }
-}
-
-.modal.open .modal-content {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.modal.closing .modal-content {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-  .close-modal {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 1.5rem;
-    cursor: pointer;
-  }
-
-  .modal h3 {
-    margin-bottom: 1rem;
-  }
-
-  .modal-actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1.5rem;
-    justify-content: center;
-  }
-
-  .modal-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.9rem;
-    border: 1px solid var(--fg);
-    border-radius: 6px;
-    text-decoration: none;
-    color: var(--fg);
-    background: transparent;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .modal-btn:hover {
-    background: var(--fg);
-    color: var(--bg);
-  }
-
-  .icon-btn {
-    cursor: pointer;
-  }
-
-    /* Update the current-work-grid CSS */
-  .current-work-grid {
-    display: grid;
-    grid-template-columns: 1fr 2fr; /* Changed from 1:3 to 1:2 ratio to make image larger */
-    gap: 1.5rem;
-    align-items: center;
-  }
-  
-  .current-image {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    max-width: 100%;
-  }
-  
-  .current-image img {
-    width: 100%; /* Make image fill its container */
-    height: auto;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Make it responsive */
-  @media (max-width: 768px) {
-    .current-work-grid {
-      grid-template-columns: 1fr;
-    }
-    
-    .current-image {
-      margin-bottom: 1rem;
-      max-width: 300px; /* Limit size on mobile */
-      margin-left: auto;
-      margin-right: auto;
-    }
-  }
-  </style>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
   <!-- Header -->
@@ -335,26 +29,30 @@
 
   <!-- Hero -->
   <section class="section hero reveal">
-  <div class="container">
-    <div class="hero-grid">
-      <div>
-        <p class="sm-title">Portfolio</p>
-        <h1>Martin Ševčík</h1>
-        <p class="tagline">Computer Science Student at BUT FIT ✦ Software Developer ✦ RL Enthusiast</p>
-        <div class="cta-row">
-          <a href="CV-Martin-Sevcik.pdf" class="btn-outline" target="_blank" rel="noopener">
-            <i class="fas fa-file-download"></i>
-            Download CV
-          </a>
-          <a href="https://github.com/EightL" class="btn-outline" target="_blank" rel="noopener">
-            <i class="fab fa-github"></i>
-            GitHub
-          </a>
+    <div class="container">
+      <div class="hero-grid">
+        <div>
+          <p class="sm-title">Portfolio</p>
+          <h1>Martin Ševčík</h1>
+          <p class="tagline">Computer Science Student at BUT FIT ✦ Software Developer ✦ RL Enthusiast</p>
+          <div class="cta-row">
+            <a href="pdfs/CV_Martin_Sevcik.pdf" class="btn-outline" target="_blank" rel="noopener">
+              <i class="fas fa-file-download"></i>
+              Download CV (CZ)
+            </a>
+            <a href="pdfs/CV_Martin_Sevcik_EN.pdf" class="btn-outline" target="_blank" rel="noopener">
+              <i class="fas fa-file-download"></i>
+              Download CV (EN)
+            </a>
+            <a href="https://github.com/EightL" class="btn-outline" target="_blank" rel="noopener">
+              <i class="fab fa-github"></i>
+              GitHub
+            </a>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
   <!-- About -->
   <section id="about" class="section reveal">
@@ -394,96 +92,91 @@
             <i class="fab fa-github"></i>
           </a>
         </article>
-                <!-- IFJ24 Zig-like Compiler -->
+        <!-- IFJ24 Zig-like Compiler -->
         <article class="project-card">
-        <a href="https://github.com/EightL/IFJ24-ZIG-like-compiler" class="card-link" target="_blank" rel="noopener"></a>
-        <img src="assets/compiler2.png" alt="IFJ24 Compiler screenshot" class="project-img" />
-        <div class="project-body">
+          <a href="https://github.com/EightL/IFJ24-ZIG-like-compiler" class="card-link" target="_blank" rel="noopener"></a>
+          <img src="assets/compiler2.png" alt="IFJ24 Compiler screenshot" class="project-img" />
+          <div class="project-body">
             <h3>IFJ24 Compiler</h3>
             <p>Semester project: a single-pass compiler for a Zig-subset. Hand-written lexer & LL(1) parser, semantic analysis → custom bytecode.</p>
             <ul class="tags">
-            <li>C</li>
-            <li>Compiler</li>
-            <li>LL(1)</li>
+              <li>C</li>
+              <li>Compiler</li>
+              <li>LL(1)</li>
             </ul>
-        </div>
-        <a href="https://github.com/EightL/IFJ24-ZIG-like-compiler" class="repo-icon" target="_blank" rel="noopener">
+          </div>
+          <a href="https://github.com/EightL/IFJ24-ZIG-like-compiler" class="repo-icon" target="_blank" rel="noopener">
             <i class="fab fa-github"></i>
-        </a>
+          </a>
         </article>
-
         <!-- FSM Automata Editor & Monitor -->
         <article class="project-card">
-        <a href="https://github.com/EightL/fsm-automata-editor-monitor" class="card-link" target="_blank" rel="noopener"></a>
-        <img src="assets/app2.png" alt="FSM Automata Tool screenshot" class="project-img" />
-        <div class="project-body">
+          <a href="https://github.com/EightL/fsm-automata-editor-monitor" class="card-link" target="_blank" rel="noopener"></a>
+          <img src="assets/app2.png" alt="FSM Automata Tool screenshot" class="project-img" />
+          <div class="project-body">
             <h3>FSM Automata Tool</h3>
             <p>Qt-based desktop app to visually design finite-state machines and monitor them live over UDP/JSON.</p>
             <ul class="tags">
-            <li>C++</li>
-            <li>Qt5</li>
-            <li>UDP</li>
+              <li>C++</li>
+              <li>Qt5</li>
+              <li>UDP</li>
             </ul>
-        </div>
-        <a href="https://github.com/EightL/fsm-automata-editor-monitor" class="repo-icon" target="_blank" rel="noopener">
+          </div>
+          <a href="https://github.com/EightL/fsm-automata-editor-monitor" class="repo-icon" target="_blank" rel="noopener">
             <i class="fab fa-github"></i>
-        </a>
+          </a>
         </article>
-
         <!-- IPK25 Chat Client -->
         <article class="project-card">
-        <a href="https://github.com/EightL/ipk25-chat-client" class="card-link" target="_blank" rel="noopener"></a>
-        <img src="assets/generalClient.svg" alt="IPK25 Chat Client screenshot" class="project-img" />
-        <div class="project-body">
+          <a href="https://github.com/EightL/ipk25-chat-client" class="card-link" target="_blank" rel="noopener"></a>
+          <img src="assets/generalClient.svg" alt="IPK25 Chat Client screenshot" class="project-img" />
+          <div class="project-body">
             <h3>IPK25 Chat Client</h3>
             <p>Lightweight terminal chat over TCP/UDP (IPv4/6) with a custom protocol for low-latency messaging.</p>
             <ul class="tags">
-            <li>C++</li>
-            <li>TCP/UDP</li>
-            <li>Networking</li>
+              <li>C++</li>
+              <li>TCP/UDP</li>
+              <li>Networking</li>
             </ul>
-        </div>
-        <a href="https://github.com/EightL/ipk25-chat-client" class="repo-icon" target="_blank" rel="noopener">
+          </div>
+          <a href="https://github.com/EightL/ipk25-chat-client" class="repo-icon" target="_blank" rel="noopener">
             <i class="fab fa-github"></i>
-        </a>
+          </a>
         </article>
-
         <!-- Love4Music iOS App -->
         <article class="project-card">
-        <a href="https://github.com/EightL/Love4Music-music-album-manager" class="card-link" target="_blank" rel="noopener"></a>
-        <img src="assets/collage2.png" alt="Love4Music app screenshot" class="project-img" />
-        <div class="project-body">
+          <a href="https://github.com/EightL/Love4Music-music-album-manager" class="card-link" target="_blank" rel="noopener"></a>
+          <img src="assets/collage2.png" alt="Love4Music app screenshot" class="project-img" />
+          <div class="project-body">
             <h3>Love4Music</h3>
             <p>iOS app to curate and manage favourite albums via the Spotify API, built with SwiftUI & SwiftData.</p>
             <ul class="tags">
-            <li>Swift</li>
-            <li>SwiftUI</li>
-            <li>Spotify API</li>
+              <li>Swift</li>
+              <li>SwiftUI</li>
+              <li>Spotify API</li>
             </ul>
-        </div>
-        <a href="https://github.com/EightL/Love4Music-music-album-manager" class="repo-icon" target="_blank" rel="noopener">
+          </div>
+          <a href="https://github.com/EightL/Love4Music-music-album-manager" class="repo-icon" target="_blank" rel="noopener">
             <i class="fab fa-github"></i>
-        </a>
+          </a>
         </article>
-
         <!-- Evenmate Expense Splitter -->
         <article class="project-card">
-        <a href="https://github.com/EightL/Evenmate-expense-splitter-app" class="card-link" target="_blank" rel="noopener"></a>
-        <img src="assets/evenmate.png" alt="Evenmate app screenshot" class="project-img" />
-        <div class="project-body">
+          <a href="https://github.com/EightL/Evenmate-expense-splitter-app" class="card-link" target="_blank" rel="noopener"></a>
+          <img src="assets/evenmate.png" alt="Evenmate app screenshot" class="project-img" />
+          <div class="project-body">
             <h3>Evenmate</h3>
             <p>Cross-platform expense-splitting app (Splitwise-style), built with React Native, Expo & Supabase.</p>
             <ul class="tags">
-            <li>React Native</li>
-            <li>Expo</li>
-            <li>Supabase</li>
+              <li>React Native</li>
+              <li>Expo</li>
+              <li>Supabase</li>
             </ul>
-        </div>
-        <a href="https://github.com/EightL/Evenmate-expense-splitter-app" class="repo-icon" target="_blank" rel="noopener">
+          </div>
+          <a href="https://github.com/EightL/Evenmate-expense-splitter-app" class="repo-icon" target="_blank" rel="noopener">
             <i class="fab fa-github"></i>
-        </a>
+          </a>
         </article>
-
       </div>
       <div class="more-projects">
         <a href="https://github.com/EightL?tab=repositories" class="see-more" target="_blank" rel="noopener">
@@ -517,163 +210,73 @@
       </div>
     </div>
   </section>
-<!-- Contact section with modals -->
-<section id="contact" class="section reveal">
-  <div class="container" style="text-align:center;">
-    <p class="sm-title">Get in Touch</p>
-    <p>Let's collaborate—or just say hi.</p>
-    <div class="contact-buttons">
-      <button class="icon-btn" id="showPhoneModal">
-        <i class="fas fa-phone"></i>
-        Call
-      </button>
-      <button class="icon-btn" id="showEmailModal">
-        <i class="fas fa-envelope"></i>
-        Email
-      </button>
-      <a class="icon-btn" href="https://github.com/EightL" target="_blank" rel="noopener">
-        <i class="fab fa-github"></i>
-        GitHub
-      </a>
-      <a class="icon-btn" href="https://www.linkedin.com/in/martin-ševčík-ba54942a3" target="_blank" rel="noopener">
-        <i class="fab fa-linkedin"></i>
-        LinkedIn
-      </a>
-    </div>
-  </div>
 
-  <!-- Phone Modal -->
-  <div id="phoneModal" class="modal">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <h3>Contact by Phone</h3>
-      <p>You can reach me at: <a href="tel:+420605724041">+420 605 724 041</a></p>
-      <div class="modal-actions">
-        <button class="modal-btn copy-btn" data-copy="+420605724041">
-          <i class="fas fa-copy"></i> Copy number
+  <!-- Contact section with modals -->
+  <section id="contact" class="section reveal">
+    <div class="container" style="text-align:center;">
+      <p class="sm-title">Get in Touch</p>
+      <p>Let's collaborate—or just say hi.</p>
+      <div class="contact-buttons">
+        <button class="icon-btn" id="showPhoneModal">
+          <i class="fas fa-phone"></i>
+          Call
         </button>
-        <a href="tel:+420605724041" class="modal-btn">
-          <i class="fas fa-phone"></i> Call now
+        <button class="icon-btn" id="showEmailModal">
+          <i class="fas fa-envelope"></i>
+          Email
+        </button>
+        <a class="icon-btn" href="https://github.com/EightL" target="_blank" rel="noopener">
+          <i class="fab fa-github"></i>
+          GitHub
+        </a>
+        <a class="icon-btn" href="https://www.linkedin.com/in/martin-ševčík-ba54942a3" target="_blank" rel="noopener">
+          <i class="fab fa-linkedin"></i>
+          LinkedIn
         </a>
       </div>
     </div>
-  </div>
 
-  <!-- Email Modal -->
-  <div id="emailModal" class="modal">
-    <div class="modal-content">
-      <span class="close-modal">&times;</span>
-      <h3>Contact by Email</h3>
-      <p>Send me a message at: <a href="mailto:sevcikm2514@gmail.com">sevcikm2514@gmail.com</a></p>
-      <div class="modal-actions">
-        <button class="modal-btn copy-btn" data-copy="sevcikm2514@gmail.com">
-          <i class="fas fa-copy"></i> Copy email
-        </button>
-        <a href="mailto:sevcikm2514@gmail.com" class="modal-btn">
-          <i class="fas fa-envelope"></i> Open mail client
-        </a>
+    <!-- Phone Modal -->
+    <div id="phoneModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3>Contact by Phone</h3>
+        <p>You can reach me at: <a href="tel:+420605724041">+420 605 724 041</a></p>
+        <div class="modal-actions">
+          <button class="modal-btn copy-btn" data-copy="+420605724041">
+            <i class="fas fa-copy"></i> Copy number
+          </button>
+          <a href="tel:+420605724041" class="modal-btn">
+            <i class="fas fa-phone"></i> Call now
+          </a>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+
+    <!-- Email Modal -->
+    <div id="emailModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3>Contact by Email</h3>
+        <p>Send me a message at: <a href="mailto:sevcikm2514@gmail.com">sevcikm2514@gmail.com</a></p>
+        <div class="modal-actions">
+          <button class="modal-btn copy-btn" data-copy="sevcikm2514@gmail.com">
+            <i class="fas fa-copy"></i> Copy email
+          </button>
+          <a href="mailto:sevcikm2514@gmail.com" class="modal-btn">
+            <i class="fas fa-envelope"></i> Open mail client
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- Footer -->
   <footer>© <span id="year"></span> Martin Ševčík — All rights reserved.</footer>
 
-  <script>
-    // dynamic year
-    document.getElementById('year').textContent = new Date().getFullYear();
-    // scroll reveal
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('show'); obs.unobserve(e.target); } });
-    }, { threshold: 0.15 });
-    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-    // mobile nav toggle
-    document.querySelector('.menu-toggle').addEventListener('click', () => {
-      document.querySelector('nav ul').classList.toggle('open');
-    });
-    // highlight section titles on nav click
-    document.querySelectorAll('nav a[href^="#"]').forEach(link => {
-      link.addEventListener('click', function() {
-        const id = this.getAttribute('href').slice(1);
-        const section = document.getElementById(id);
-        if (section) {
-          const title = section.querySelector('.sm-title');
-          if (title) {
-            title.classList.add('highlighted');
-            setTimeout(() => title.classList.remove('highlighted'), 1000);
-          }
-        }
-      });
-    });
-    document.querySelector('.brand').addEventListener('click', function(e) {
-  e.preventDefault();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  
-  const portfolioTitle = document.querySelector('.hero .sm-title');
-  if (portfolioTitle) {
-    portfolioTitle.classList.add('highlighted');
-    setTimeout(() => portfolioTitle.classList.remove('highlighted'), 1000);
-  }
-});
-
-    // helper functions for modal
-    function openModal(modal) {
-      modal.classList.remove('closing');
-      modal.style.display = 'flex';  // Changed from block to flex
-      document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
-      // next frame: add "open" to kick off the transition
-      requestAnimationFrame(() => modal.classList.add('open'));
-    }
-
-    function closeModal(modal) {
-      modal.classList.remove('open');
-      modal.classList.add('closing');
-      document.body.style.overflow = ''; // Restore scrolling
-      // after the .3s transition, truly hide it
-      setTimeout(() => {
-        modal.classList.remove('closing');
-        modal.style.display = 'none';
-      }, 300);
-    }
-
-    // grab your elements
-    const phoneModal     = document.getElementById('phoneModal');
-    const emailModal     = document.getElementById('emailModal');
-    const showPhoneModal = document.getElementById('showPhoneModal');
-    const showEmailModal = document.getElementById('showEmailModal');
-    const closeButtons   = document.querySelectorAll('.close-modal');
-    const copyButtons = document.querySelectorAll('.copy-btn');
-
-    // open
-    showPhoneModal.addEventListener('click', () => openModal(phoneModal));
-    showEmailModal.addEventListener('click', () => openModal(emailModal));
-
-    // close when clicking X
-    closeButtons.forEach(btn => {
-      const modal = btn.closest('.modal');
-      btn.addEventListener('click', () => closeModal(modal));
-    });
-
-    // close when clicking outside the content
-    window.addEventListener('click', e => {
-      if (e.target === phoneModal) closeModal(phoneModal);
-      if (e.target === emailModal) closeModal(emailModal);
-    });
-
-    // Copy functionality (preserved from original code)
-    copyButtons.forEach(btn => {
-      btn.addEventListener('click', function() {
-        const textToCopy = this.getAttribute('data-copy');
-        navigator.clipboard.writeText(textToCopy).then(() => {
-          const originalText = this.innerHTML;
-          this.innerHTML = '<i class="fas fa-check"></i> Copied!';
-          setTimeout(() => {
-            this.innerHTML = originalText;
-          }, 2000);
-        });
-      });
-    });
-  </script>
+  <!-- Scripts -->
+  <script src="js/main.js"></script>
+  <script src="js/index.js"></script>
+  <script src="js/modal.js"></script>
 </body>
 </html>
