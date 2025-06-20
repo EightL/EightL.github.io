@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RL Learning Progress | Martin Ševčík</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/current.css">
+  <link rel="stylesheet" href="css/learning.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a href="current.html" class="back"><i class="fas fa-chevron-left"></i>Back to Research</a>
+      <span>RL Learning Progress</span>
+    </header>
+
+    <main>
+      <h1>Reinforcement Learning Basics</h1>
+      <p class="lead">A structured approach to mastering the fundamentals of Reinforcement Learning for my thesis research on emergent coalitions in multi-agent environments.</p>
+
+      <section class="intro-section">
+        <div class="progress-overview">
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: 35%;"></div>
+          </div>
+          <p class="progress-text">35% complete</p>
+        </div>
+        <p>This page documents my learning path through the core concepts of Reinforcement Learning, from fundamental principles to advanced topics in multi-agent systems.</p>
+      </section>
+
+      <!-- Resources section moved to the top -->
+      <section class="resources-section">
+        <h2>Learning Resources</h2>
+        <div class="resources-grid">
+          <div class="resource-card">
+            <i class="fas fa-book resource-icon"></i>
+            <h3>Sutton & Barto</h3>
+            <p>Reinforcement Learning: An Introduction (2nd Edition)</p>
+            <div class="resource-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 50%"></div>
+              </div>
+              <p>8/17 chapters</p>
+            </div>
+            <a href="http://incompleteideas.net/book/the-book.html" target="_blank" class="resource-link">Access Book <i class="fas fa-external-link-alt"></i></a>
+          </div>
+          
+          <div class="resource-card">
+            <i class="fas fa-video resource-icon"></i>
+            <h3>David Silver's RL Course</h3>
+            <p>UCL / DeepMind Reinforcement Learning Lectures</p>
+            <div class="resource-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 50%"></div>
+              </div>
+              <p>5/10 lectures</p>
+            </div>
+            <a href="https://youtube.com/playlist?list=PLzuuYNsE1EZAXYR4FJ75jcJseBmo4KQ9-&si=jKYVZQ2gkxAN-gfA" target="_blank" class="resource-link">Watch Lectures <i class="fas fa-external-link-alt"></i></a>
+          </div>
+          
+          <div class="resource-card">
+            <i class="fab fa-github resource-icon"></i>
+            <h3>@dennybritz's RL Repository</h3>
+            <p>Practical implementations of RL algorithms</p>
+            <div class="resource-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 30%"></div>
+              </div>
+              <p>Exploring implementations</p>
+            </div>
+            <a href="https://github.com/dennybritz/reinforcement-learning" target="_blank" class="resource-link">View Repository <i class="fas fa-external-link-alt"></i></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="learning-module completed" id="mdp">
+        <div class="module-header">
+          <h2><i class="fas fa-check-circle"></i> Markov Decision Processes (MDPs)</h2>
+          <span class="completion-date">Completed: May 18, 2025</span>
+        </div>
+        <div class="module-content">
+          <p>The mathematical framework underlying reinforcement learning problems.</p>
+          <ul class="topic-list">
+            <li>States, Actions, and Rewards</li>
+            <li>Markov Property and State Transitions</li>
+            <li>Policies and Value Functions</li>
+            <li>Bellman Equations and Optimality</li>
+          </ul>
+          <div class="note">
+            <p><i class="fas fa-lightbulb"></i> <strong>Key Insight:</strong> Understanding how the Markov property simplifies the complexity of sequential decision making was critical for building intuition about how agents learn optimal behaviors.</p>
+          </div>
+        </div>
+        
+        <!-- Expanded content section -->
+        <div class="expanded-content">
+          <div class="expanded-content-inner">
+            <div class="concept-diagram">
+              <img src="assets/mdp.png" alt="Agent-Environment MDP Interaction Loop" />
+              <p class="image-caption">Agent-Environment interaction in an MDP</p>
+                <p class="image-source">Source: Sutton, R. S., & Barto, A. G. (2018). Reinforcement Learning: An Introduction (2nd ed.). MIT Press.</p>
+            </div>
+            
+            <div class="notes-section">
+              <h3><i class="fas fa-book-open"></i> My Notes: Finite Markov Decision Processes</h3>
+              
+              <ul>
+                <li>
+                  <strong>Agent ↔ Environment loop</strong><br>
+                  On each time step the agent observes a state, picks an action, then receives a reward and the next state. The complete transition dynamics are given by the probability distribution over next states and rewards.
+                </li>
+                
+                <li>
+                  <strong>States, Actions, Rewards</strong><br>
+                  <em>State</em> must summarize all history that matters going forward; <em>actions</em> are the choices under the agent's control; <em>rewards</em> are the single-number signals defining success.
+                </li>
+                
+                <li>
+                  <strong>Markov property</strong><br>
+                  With a well-chosen state representation, future outcomes depend only on the current state–action pair, not on earlier history, making the problem a Markov decision process (MDP).
+                </li>
+                
+                <li>
+                  <strong>Return & discounting</strong><br>
+                  The objective is to maximise expected discounted return - the sum of future rewards weighted by a discount factor between 0 and 1, balancing short- vs. long-term pay-offs.
+                </li>
+                
+                <li>
+                  <strong>Policies & value functions</strong><br>
+                  A policy selects actions. <em>State-value</em> and <em>action-value</em> functions predict the return you can expect if you start from a state (or state–action) and then follow a policy.
+                </li>
+                
+                <li>
+                  <strong>Bellman optimality</strong><br>
+                  Optimal values satisfy recursive equations relating the value of a state to the values of successor states. Any policy that's greedy with respect to the optimal value functions is guaranteed optimal.
+                </li>
+              </ul>
+            </div>
+            
+          <video src="assets/MarkovProperty.mp4"
+                 autoplay
+                 loop
+                 muted
+                 playsinline
+                 style="width:100%; border-radius:12px; border: 1px solid #e5e7eb; padding: 0px; background-color: #f9fafb;">
+            Your browser does not support the video tag.
+          </video>
+            
+          </div>
+        </div>
+      </section>
+
+      <section class="learning-module completed" id="dp">
+        <div class="module-header">
+          <h2><i class="fas fa-check-circle"></i> Dynamic Programming</h2>
+          <span class="completion-date">Completed: June 2, 2025</span>
+        </div>
+        <div class="module-content">
+          <p>Solving MDPs with perfect knowledge of the environment.</p>
+          <ul class="topic-list">
+            <li>Policy Evaluation</li>
+            <li>Policy Improvement</li>
+            <li>Policy Iteration</li>
+            <li>Value Iteration</li>
+          </ul>
+          <!-- Key Resources removed -->
+          <div class="note">
+            <p><i class="fas fa-lightbulb"></i> <strong>Key Insight:</strong> Even though DP methods assume complete knowledge of the environment (rarely available in real-world scenarios), they establish the theoretical foundation for model-free methods that I'll use in my thesis.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="learning-module in-progress" id="td">
+        <div class="module-header">
+          <h2><i class="fas fa-spinner fa-spin"></i> Temporal-Difference Learning</h2>
+          <span class="status">In Progress</span>
+        </div>
+        <div class="module-content">
+          <p>Learning directly from experience without a model.</p>
+          <ul class="topic-list">
+            <li>TD(0) and SARSA</li>
+            <li>Q-Learning</li>
+            <li>n-step TD methods</li>
+            <li>TD(λ) and Eligibility Traces</li>
+          </ul>
+          <!-- Key Resources removed -->
+          <div class="current-focus">
+            <p><i class="fas fa-code"></i> <strong>Currently:</strong> Implementing Q-learning for grid-world environment prototype</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="learning-module planned" id="fa">
+        <div class="module-header">
+          <h2>Function Approximation</h2>
+          <span class="status">Planned</span>
+        </div>
+        <div class="module-content">
+          <p>Scaling to large state spaces using function approximation.</p>
+          <ul class="topic-list">
+            <li>Linear Function Approximation</li>
+            <li>Neural Networks for RL</li>
+            <li>Deep Q-Networks (DQN)</li>
+            <li>Convergence and Stability Issues</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="learning-module planned" id="pg">
+        <div class="module-header">
+          <h2>Policy Gradient Methods</h2>
+          <span class="status">Planned</span>
+        </div>
+        <div class="module-content">
+          <p>Directly optimizing policy parameters.</p>
+          <ul class="topic-list">
+            <li>REINFORCE Algorithm</li>
+            <li>Actor-Critic Methods</li>
+            <li>Trust Region Policy Optimization</li>
+            <li>Proximal Policy Optimization</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="learning-module planned" id="marl">
+        <div class="module-header">
+          <h2>Multi-Agent RL</h2>
+          <span class="status">Planned</span>
+        </div>
+        <div class="module-content">
+          <p>Extending RL to multiple interacting agents.</p>
+          <ul class="topic-list">
+            <li>Stochastic Games</li>
+            <li>Cooperation and Competition</li>
+            <li>Centralized Training, Decentralized Execution</li>
+            <li>Emergent Behavior and Coalition Formation</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="reflection-section">
+        <h2>Learning Reflections</h2>
+        <div class="reflection">
+          <p class="reflection-date">June 15, 2025</p>
+          <p>The connection between Dynamic Programming and TD learning is becoming clearer as I implement basic algorithms. The bootstrap principle that unites them is elegant, though TD's ability to learn without a complete model is what makes it practical for my coalition research.</p>
+        </div>
+        <div class="reflection">
+          <p class="reflection-date">May 25, 2025</p>
+          <p>Working through the mathematical foundations of MDPs has been challenging but essential. I'm seeing how the formalization of states, actions, and rewards creates a framework that will allow me to precisely define coalition behavior in my research environment.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>© <span id="year"></span> Martin Ševčík — All rights reserved.</footer>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/main.js"></script>
+  <script src="js/learning.js"></script>
+</body>
+</html>

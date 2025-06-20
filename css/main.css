@@ -112,3 +112,10 @@ footer { text-align: center; padding: 2rem 0 4rem; font-size: .85rem; color: var
   animation: bubblyHighlight 0.8s ease-in-out forwards;
   display: inline-block;
 }
+
+.image-source {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 0.25rem;
+  font-style: italic;
+}
