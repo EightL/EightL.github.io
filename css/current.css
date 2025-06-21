@@ -94,3 +94,32 @@ li i {
   color: var(--fg);
   opacity: 0.8;
 }
+
+/* Learning Page Button */
+.learning-button-container {
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.learning-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  background-color: #444444;
+  color: white;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.learning-button:hover {
+  background-color: #222222;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.learning-button i {
+  font-size: 1.1rem;
+}

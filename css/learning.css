@@ -366,3 +366,22 @@ h1 {
     font-size: 0.8rem;
   }
 }
+
+/* Implementation Link Styles */
+.implementation-link {
+  margin-top: 2rem;
+  padding: 1rem 1.5rem;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  border-left: 4px solid #444444;
+}
+
+.implementation-link p {
+  margin-bottom: 0.75rem;
+}
+
+.implementation-link .resource-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}

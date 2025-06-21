@@ -74,6 +74,19 @@
             </div>
             <a href="https://github.com/dennybritz/reinforcement-learning" target="_blank" class="resource-link">View Repository <i class="fas fa-external-link-alt"></i></a>
           </div>
+          
+          <div class="resource-card">
+            <i class="fas fa-code resource-icon"></i>
+            <h3>My RL Implementations</h3>
+            <p>My personal repository of RL algorithm implementations and exercises</p>
+            <div class="resource-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 35%"></div>
+              </div>
+              <p>Growing collection of implementations</p>
+            </div>
+            <a href="https://github.com/EightL/RL-basics-exercises" target="_blank" class="resource-link">View Code <i class="fas fa-external-link-alt"></i></a>
+          </div>
         </div>
       </section>
 
@@ -169,6 +182,56 @@
           <!-- Key Resources removed -->
           <div class="note">
             <p><i class="fas fa-lightbulb"></i> <strong>Key Insight:</strong> Even though DP methods assume complete knowledge of the environment (rarely available in real-world scenarios), they establish the theoretical foundation for model-free methods that I'll use in my thesis.</p>
+          </div>
+        </div>
+        
+        <!-- Expanded content section -->
+        <div class="expanded-content">
+          <div class="expanded-content-inner">
+            <div class="notes-section">
+              <h3><i class="fas fa-book-open"></i> My Notes: Dynamic Programming</h3>
+              
+              <ul>
+                <li>
+                  <strong>What it is</strong><br>
+                  An iterative method for solving MDPs by applying backup updates until values or policies converge.
+                </li>
+                
+                <li>
+                  <strong>Value Iteration</strong><br>
+                  Starts with arbitrary state values, then repeatedly updates each state's value based on expected rewards and next‐state estimates, stopping once changes are negligible.
+                </li>
+                
+                <li>
+                  <strong>Policy Iteration</strong><br>
+                  Alternates between:<br>
+                  - <strong>Policy evaluation</strong>: compute value estimates for the current policy<br>
+                  - <strong>Policy improvement</strong>: update the policy to pick better actions based on those estimates<br>
+                  Repeat until the policy no longer changes.
+                </li>
+                
+                <li>
+                  <strong>Why it matters</strong><br>
+                  DP gives a concrete, guaranteed-to-converge procedure for finding optimal value functions or policies, so an agent can act optimally without further planning.
+                </li>
+              </ul>
+            </div>
+            
+          <video src="assets/ValuePolicyBackupTweak.mp4"
+                 autoplay
+                 loop
+                 muted
+                 playsinline
+                 style="width:100%; border-radius:12px; border: 1px solid #e5e7eb; padding: 0px; background-color: #f9fafb;">
+            Your browser does not support the video tag.
+          </video>
+          
+          <div class="implementation-link">
+            <p><i class="fas fa-code"></i> <strong>My Implementation:</strong> Check out my Dynamic Programming exercises and implementations.</p>
+            <a href="https://github.com/EightL/RL-basics-exercises/tree/main/DP" target="_blank" class="resource-link">
+              View DP Code <i class="fas fa-external-link-alt"></i>
+            </a>
+          </div>
           </div>
         </div>
       </section>
