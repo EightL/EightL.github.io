@@ -123,3 +123,33 @@ li i {
 .learning-button i {
   font-size: 1.1rem;
 }
+
+/* Access Button - Smaller Version */
+.access-button-container {
+  margin-top: 1.5rem;
+  text-align: left;
+}
+
+.access-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.2rem;
+  background-color: #444444;
+  color: white;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.access-button:hover {
+  background-color: #222222;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.access-button i {
+  font-size: 1rem;
+}

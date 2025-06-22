@@ -25,9 +25,9 @@
       <section class="intro-section">
         <div class="progress-overview">
           <div class="progress-bar">
-            <div class="progress-fill" style="width: 35%;"></div>
+            <div class="progress-fill" style="width: 65%;"></div>
           </div>
-          <p class="progress-text">35% complete</p>
+          <p class="progress-text">65% complete</p>
         </div>
         <p>This page documents my learning path through the core concepts of Reinforcement Learning, from fundamental principles to advanced topics in multi-agent systems.</p>
       </section>
@@ -236,30 +236,137 @@
         </div>
       </section>
 
-      <section class="learning-module in-progress" id="td">
+      <section class="learning-module completed" id="mc">
         <div class="module-header">
-          <h2><i class="fas fa-spinner fa-spin"></i> Temporal-Difference Learning</h2>
-          <span class="status">In Progress</span>
+          <h2><i class="fas fa-check-circle"></i> Monte Carlo Methods</h2>
+          <span class="completion-date">Completed: June 15, 2025</span>
         </div>
         <div class="module-content">
-          <p>Learning directly from experience without a model.</p>
+          <p>Learning from complete episodes of experience, without a model.</p>
           <ul class="topic-list">
-            <li>TD(0) and SARSA</li>
-            <li>Q-Learning</li>
-            <li>n-step TD methods</li>
-            <li>TD(λ) and Eligibility Traces</li>
+            <li>First-visit and Every-visit MC Prediction</li>
+            <li>MC Control with Exploring Starts</li>
+            <li>On-policy (ε-soft) and Off-policy (importance sampling) methods</li>
           </ul>
-          <!-- Key Resources removed -->
-          <div class="current-focus">
-            <p><i class="fas fa-code"></i> <strong>Currently:</strong> Implementing Q-learning for grid-world environment prototype</p>
+          <div class="note">
+            <p><i class="fas fa-lightbulb"></i> <strong>Key Insight:</strong> MC methods are the first step towards learning from raw experience, freeing us from the need for a perfect environment model. The concept of learning from *complete returns* is a key difference from TD methods.</p>
+          </div>
+        </div>
+        
+        <!-- Expanded content section -->
+        <div class="expanded-content">
+          <div class="expanded-content-inner">
+            <div class="concept-diagram">
+              <img src="assets/MC_Control.png" alt="Generalized Policy Iteration Loop" />
+              <p class="image-caption">Generalized Policy Iteration (GPI) loop, which MC methods follow.</p>
+              <p class="image-source">Source: Sutton, R. S., & Barto, A. G. (2018). Reinforcement Learning: An Introduction (2nd ed.). MIT Press.</p>
+            </div>
+            <div class="notes-section">
+              <h3><i class="fas fa-book-open"></i> My Notes: Monte Carlo Methods</h3>
+              <ul>
+                <li>
+                  <strong>What it is</strong><br>
+                  Model-free methods that learn value functions and optimal policies from sample episodes of experience. Unlike DP, they don't need a model of the environment's dynamics.
+                </li>
+                <li>
+                  <strong>Prediction (Evaluation)</strong><br>
+                  To estimate V(s), MC methods run many episodes and average the returns observed after each visit to state s. This works because the average return converges to the expected return.
+                </li>
+                <li>
+                  <strong>Control (Improvement)</strong><br>
+                  Follows the pattern of Generalized Policy Iteration (GPI). After evaluating the current policy, it's improved by making it greedy with respect to the current value function. To ensure exploration, methods like exploring starts or ε-soft policies are used.
+                </li>
+                <li>
+                  <strong>Key trade-off</strong><br>
+                  MC updates only happen at the end of an episode. This means learning can be slow, but the updates are unbiased since they are based on the actual, full return. This contrasts with TD methods which "bootstrap" and update on every step.
+                </li>
+              </ul>
+            </div>
+            <div class="implementation-link">
+              <p><i class="fas fa-code"></i> <strong>My Implementation:</strong> Check out my Monte Carlo exercises and implementations.</p>
+              <a href="https://github.com/EightL/RL-basics-exercises/tree/main/MC" target="_blank" class="resource-link">
+                View MC Code <i class="fas fa-external-link-alt"></i>
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
-      <section class="learning-module planned" id="fa">
+      <section class="learning-module completed" id="td">
         <div class="module-header">
-          <h2>Function Approximation</h2>
-          <span class="status">Planned</span>
+          <h2><i class="fas fa-check-circle"></i> Temporal-Difference Learning</h2>
+          <span class="completion-date">Completed: June 21, 2025</span>
+        </div>
+        <div class="module-content">
+          <p>A blend of Monte Carlo and Dynamic Programming ideas, learning from each step.</p>
+          <ul class="topic-list">
+            <li>TD(0) Prediction for state-value estimation</li>
+            <li>SARSA: On-policy TD control</li>
+            <li>Q-Learning: Off-policy TD control</li>
+            <li>TD(&lambda;) and Eligibility Traces</li>
+          </ul>
+          <div class="note">
+            <p><i class="fas fa-lightbulb"></i> <strong>Key Insight:</strong> TD learning introduces "bootstrapping"—updating a guess with a better guess. This allows agents to learn online, after every single step, rather than waiting for an episode to finish.</p>
+          </div>
+        </div>
+        
+        
+        <!-- Expanded content section -->
+        <div class="expanded-content">
+          <div class="expanded-content-inner">
+            <video src="assets/SarsaDiagram.mp4"
+                 autoplay
+                 loop
+                 muted
+                 playsinline
+                 style="width:100%; border-radius:12px; border: 1px solid #e5e7eb; padding: 0px; background-color: #f9fafb;">
+            Your browser does not support the video tag.
+          </video>
+            <div class="notes-section" style="grid-column: 1 / -1;">
+              <h3><i class="fas fa-book-open"></i> My Notes: Temporal-Difference Learning</h3>
+              <ul>
+                <li>
+                  <strong>What it is & The Bias-Variance Tradeoff</strong><br>
+                  A model-free method that learns from other learned estimates (bootstrapping). It trades the high variance of Monte Carlo for some bias, as it updates on estimates, not full returns. This often leads to faster learning.
+                </li>
+                <li>
+                  <strong>TD(0) Prediction</strong><br>
+                  The simplest form for policy evaluation. It updates a state's value <code>V(S)</code> using the reward <code>R</code> plus the discounted value of the next state <code>V(S')</code>—updating a guess with a slightly better guess.
+                </li>
+                <li>
+                  <strong>SARSA (On-Policy Control)</strong><br>
+                  An <strong>on-policy</strong> algorithm that learns the value of the policy the agent is *actually following* (including exploration). The update uses the action <code>A'</code> the agent actually takes, leading to a more conservative or "safer" policy.
+                </li>
+                <li>
+                  <strong>Q-Learning (Off-Policy Control)</strong><br>
+                  An <strong>off-policy</strong> algorithm that learns the optimal policy regardless of the agent's actions. It uses the value of the *best* possible next action (<code>max</code>) for its update, allowing it to learn an optimal policy while behaving exploratorily.
+                </li>
+                 <li>
+                  <strong>On-Policy vs. Off-Policy: A Summary</strong><br>
+                  On-policy (SARSA) learns the value of the current behavior policy. Off-policy (Q-Learning) learns the value of the optimal policy while following a different, exploratory policy.
+                </li>
+                <li>
+                  <strong>Unifying MC and TD: TD(&lambda;) and Eligibility Traces</strong><br>
+                  Bridges the gap between one-step TD (&lambda;=0) and Monte Carlo (&lambda;=1). It uses an <strong>eligibility trace</strong>, a short-term memory of recent state-action pairs, to assign credit from a TD error to all recent, eligible steps. This allows for more efficient learning, especially with delayed rewards.
+                </li>
+              </ul>
+            </div>
+            <video src="assets/FourStepBackupDiagrams.mp4"
+                 autoplay
+                 loop
+                 muted
+                 playsinline
+                 style="width:100%; border-radius:12px; border: 1px solid #e5e7eb; padding: 0px; background-color: #f9fafb;">
+            Your browser does not support the video tag.
+          </video>
+          </div>
+        </div>
+      </section>
+
+      <section class="learning-module in-progress" id="fa">
+        <div class="module-header">
+          <h2><i class="fas fa-spinner fa-spin"></i> Function Approximation</h2>
+          <span class="status">In Progress</span>
         </div>
         <div class="module-content">
           <p>Scaling to large state spaces using function approximation.</p>
@@ -307,12 +414,17 @@
       <section class="reflection-section">
         <h2>Learning Reflections</h2>
         <div class="reflection">
+          <p class="reflection-date">June 21, 2025</p>
+          <p>The distinction between on-policy (SARSA) and off-policy (Q-Learning) control is a major conceptual leap. The idea that an agent can learn about the optimal path while behaving sub-optimally (Q-Learning) is powerful. This separation of exploration from learning the optimal policy seems critical for complex problems where thorough exploration is necessary but you still want to converge to the best possible strategy.</p>
+        </div>
+        <div class="reflection">
           <p class="reflection-date">June 15, 2025</p>
           <p>The connection between Dynamic Programming and TD learning is becoming clearer as I implement basic algorithms. The bootstrap principle that unites them is elegant, though TD's ability to learn without a complete model is what makes it practical for my coalition research.</p>
         </div>
         <div class="reflection">
           <p class="reflection-date">May 25, 2025</p>
           <p>Working through the mathematical foundations of MDPs has been challenging but essential. I'm seeing how the formalization of states, actions, and rewards creates a framework that will allow me to precisely define coalition behavior in my research environment.</p>
+        </div>
         </div>
       </section>
     </main>

@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/learning.css">
 </head>
 <body>
   <!-- Header -->
@@ -194,8 +195,8 @@
   <section id="current" class="section reveal">
     <div class="container">
       <p class="sm-title">What I'm Currently Working On</p>
-      <div class="current-work">
-        <div class="current-box" style="width:100%;">
+      <div class="current-work" style="display: flex; gap: 20px;">
+        <div class="current-box" style="width:80%;">
           <p>I'm researching <strong>Emergent Coalitions in Multi-Agent RL</strong>, investigating whether an explicit <em>coalition bonus α</em> can foster better coordination in grid-world environments. My bachelor's thesis compares <em>cooperative</em> and <em>competitive</em> reward structures in team-versus-boss scenarios.</p>
           <a href="current.html" class="see-more">See more
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -204,16 +205,25 @@
             </svg>
           </a>
         </div>
-        <div class="current-image" style="margin-top: 20px; text-align: center;">
-          <video src="assets/CoalitionGrid.mp4"
-                 autoplay
-                 loop
-                 muted
-                 playsinline
-                 style="width:100%; border-radius:12px; border: 1px solid #e5e7eb; padding: 0px; background-color: #f9fafb;">
-            Your browser does not support the video tag.
-          </video>
+        <div class="current-box" style="width:20%; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <p><strong>RL Fundamentals</strong></p>
+          </div>
+          <a href="learning.html" class="learning-button" style="background-color: #3a3a3a; color: white; padding: 10px 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; text-decoration: none; gap: 8px; margin-top: 10px; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            <i class="fas fa-graduation-cap"></i>
+            View RL Learning Progress
+          </a>
         </div>
+      </div>
+      <div class="current-image" style="margin-top: 20px; text-align: center;">
+        <video src="assets/CoalitionGrid.mp4"
+               autoplay
+               loop
+               muted
+               playsinline
+               style="width:100%; border-radius:12px; border: 1px solid #e5e7eb; padding: 0px; background-color: #f9fafb;">
+          Your browser does not support the video tag.
+        </video>
       </div>
     </div>
   </section>
