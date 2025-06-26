@@ -90,6 +90,67 @@
         </div>
       </section>
 
+<div style="text-align: center; margin: 45px 0;">
+  <div class="arrow-divider">
+    <a href="pdfs/Reinforcement-Learning-Theory.pdf" target="_blank" rel="noopener" class="access-button" style="display: inline-block; padding: 10px 18px; font-size: 14px; position: relative; z-index: 2; background-color: #444444;">
+      <i class="fas fa-file-alt"></i>
+      View my study notes
+    </a>
+  </div>
+</div>
+
+<style>
+  .arrow-divider {
+    position: relative;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .arrow-divider::before,
+  .arrow-divider::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 35%;
+    height: 1px;
+    background: #e5e7eb;
+    z-index: 1;
+  }
+
+  .arrow-divider::before {
+    left: 0;
+    background: linear-gradient(to right, transparent, #e5e7eb 40%);
+  }
+
+  .arrow-divider::after {
+    right: 0;
+    background: linear-gradient(to left, transparent, #e5e7eb 40%);
+  }
+
+  .arrow-divider .access-button::before,
+  .arrow-divider .access-button::after {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border: solid #999;
+    border-width: 0 2px 2px 0;
+    position: absolute;
+    top: 50%;
+    margin-top: -5px;
+  }
+
+  .arrow-divider .access-button::before {
+    left: -20px;
+    transform: translateX(-100%) rotate(135deg);
+  }
+
+  .arrow-divider .access-button::after {
+    right: -20px;
+    transform: translateX(100%) rotate(-45deg);
+  }
+</style>
+
       <section class="learning-module completed" id="mdp">
         <div class="module-header">
           <h2><i class="fas fa-check-circle"></i> Markov Decision Processes (MDPs)</h2>
@@ -363,21 +424,77 @@
         </div>
       </section>
 
-      <section class="learning-module in-progress" id="fa">
+
+      <section class="learning-module completed" id="mc">
         <div class="module-header">
-          <h2><i class="fas fa-spinner fa-spin"></i> Function Approximation</h2>
-          <span class="status">In Progress</span>
+          <h2><i class="fas fa-check-circle"></i> Function Approximation</h2>
+          <span class="completion-date">Completed: June 26, 2025</span>
         </div>
+
         <div class="module-content">
-          <p>Scaling to large state spaces using function approximation.</p>
+          <p>Extend value estimation to very large or continuous state spaces by using a parametric function in place of a lookup table.</p>
           <ul class="topic-list">
-            <li>Linear Function Approximation</li>
-            <li>Neural Networks for RL</li>
-            <li>Deep Q-Networks (DQN)</li>
-            <li>Convergence and Stability Issues</li>
+            <li>Why a table of every state value is infeasible when |S| is huge or continuous</li>
+            <li>Using gradient-descent and semi-gradient updates for both TD and Monte Carlo targets</li>
+            <li>Linear function approximation: defining feature vectors and weight updates</li>
+            <li>Batch methods and least-squares approaches (LSTD, LSPI)</li>
+            <li>Empirical convergence behaviour of TD vs. MC</li>
+            <li>Off-policy divergence issues, including Baird’s counterexample</li>
+            <li>Gradient-TD and emphatic-TD methods that ensure convergence off-policy</li>
           </ul>
+
+          <div class="note">
+            <p><strong>Key Insight:</strong>  
+              Replacing the value table with a parameterised function trades exactness for scalability.  
+              With linear features and on-policy updates, semi-gradient TD converges reliably, but combining function approximation, bootstrapping, and off-policy learning can lead to divergence.  
+              Methods like Gradient-TD or emphatic-TD fix this by optimising a true gradient objective.</p>
+          </div>
+        </div>
+
+        <div class="expanded-content">
+          <div class="expanded-content-inner">
+
+            <div class="notes-section">
+              <h3>My Notes: Value Function Approximation</h3>
+              <ul>
+                <li>
+                  <strong>Problem setup</strong><br>
+                  Instead of storing V(s) in a table, define a function v̂(s,w) with parameters w and adjust w to minimise the mean-squared error between v̂(s,w) and the true value function.
+                </li>
+
+                <li>
+                  <strong>Linear approximation</strong><br>
+                  Use a feature mapping x(s) and set v̂(s,w)=x(s)ᵀw.  
+                  For Monte Carlo targets, update w ← w + α (G−v̂) x(s).  
+                  For TD(0), use the TD error δ = r + γ v̂(s′,w) − v̂(s,w) and update w ← w + α δ x(s).
+                </li>
+
+                <li>
+                  <strong>Incremental vs. batch</strong><br>
+                  • TD(λ) trades bias and variance by blending multi-step returns, with equivalent forward and backward formulations.  
+                  • LSTD computes the weight vector in one shot by solving Aw = b, requiring O(d²) storage but giving fast, stable solutions.
+                </li>
+
+                <li>
+                  <strong>Control</strong><br>
+                  Semi-gradient SARSA or Q-learning can be applied over features x(s,a).  
+                  On-policy updates remain stable; off-policy updates can diverge unless you use gradient-corrected algorithms.
+                </li>
+              </ul>
+            </div>
+
+            <div class="implementation-link">
+              <p><strong>My Implementation:</strong>  
+                 I implemented tile-coding features with linear SARSA on MountainCar-v0, and a quick LSPI demonstration.</p>
+              <a href="https://github.com/EightL/RL-basics-exercises/tree/main/FA" target="_blank" class="resource-link">
+                View FA Code <i class="fas fa-external-link-alt"></i>
+              </a>
+            </div>
+
+          </div>
         </div>
       </section>
+
 
       <section class="learning-module planned" id="pg">
         <div class="module-header">
