@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Volejbal - Prosecco Minihra</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #ffeef5 0%, #fff6fa 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        .game-container {
+            background: #fffbe8;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(184,92,142,0.15);
+            padding: 30px 20px 20px 20px;
+            max-width: 400px;
+            width: 100vw;
+            text-align: center;
+        }
+        .game-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #b85c8e;
+            margin-bottom: 8px;
+        }
+        .game-subtitle {
+            font-size: 1rem;
+            color: #7a5c1b;
+            margin-bottom: 18px;
+            opacity: 0.8;
+        }
+        .score-display {
+            background: #f7e6b3;
+            border: 2px solid #e6cfa3;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #7a5c1b;
+        }
+        .court {
+            position: relative;
+            width: 320px;
+            height: 420px;
+            background: linear-gradient(to top, #ffeec2 80%, #fffbe8 100%);
+            border-radius: 18px;
+            margin: 0 auto 18px auto;
+            box-shadow: 0 2px 12px rgba(184,92,142,0.08);
+            overflow: hidden;
+            border: 2px solid #e6cfa3;
+        }
+        .ball {
+            position: absolute;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: none;
+            border: none;
+            box-shadow: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            color: #b85c8e;
+            cursor: pointer;
+            user-select: none;
+            transition: box-shadow 0.1s;
+        }
+        .ball:active {
+            box-shadow: none;
+        }
+        .ground {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 32px;
+            background: #e6cfa3;
+            border-top: 2px solid #b08a4a;
+        }
+        .feedback {
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 600;
+            margin: 12px 0;
+            display: none;
+        }
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+        .completed-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #c3e6cb;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .back-btn {
+            background: none;
+            border: 2px solid #b85c8e;
+            color: #b85c8e;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back-btn:hover {
+            background: #b85c8e;
+            color: white;
+        }
+        @media (max-width: 400px) {
+            .court { width: 98vw; height: 60vw; min-height: 320px; }
+        }
+    </style>
+</head>
+<body>
+<audio id="birthday-music" src="happy-birthday-155461.mp3" autoplay loop style="display:none"></audio>
+<script>
+// Try to play music immediately on page load
+document.addEventListener('DOMContentLoaded', function() {
+  var audio = document.getElementById('birthday-music');
+  if (audio) {
+    // Try to play immediately
+    var playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(function(error) {
+        // Autoplay was prevented, set up click listener
+        console.log('Autoplay prevented, waiting for user interaction');
+      });
+    }
+  }
+});
+
+// Also try to play on any user interaction
+window.addEventListener('click', function playMusicOnce() {
+  var audio = document.getElementById('birthday-music');
+  if (audio && audio.paused) {
+    audio.play().catch(function(error) {
+      console.log('Could not play audio:', error);
+    });
+  }
+  // Don't remove the listener, keep it for future interactions
+});
+
+// Try to play on touch events too
+window.addEventListener('touchstart', function() {
+  var audio = document.getElementById('birthday-music');
+  if (audio && audio.paused) {
+    audio.play().catch(function(error) {
+      console.log('Could not play audio:', error);
+    });
+  }
+}, { passive: true });
+</script>
+    <div class="game-container">
+        <div class="game-title">🏐 Volejbal Minihra</div>
+        <div class="game-subtitle">Udrž loptu vo vzduchu a získaj 10 bodov pre Prosecco!</div>
+        <div class="score-display">Skóre: <span id="score">0</span> / 10</div>
+        <div class="court" id="court">
+            <div class="ground"></div>
+            <div class="ball" id="ball" style="left: 132px; top: 100px;">🏐</div>
+        </div>
+        <div class="feedback" id="feedback"></div>
+        <div class="completed-message" id="completed-message">
+            ✅ Výborne! Získala si 10 bodov! Prosecco je teraz odomknuté.
+        </div>
+        <a href="menu.html" class="back-btn">← Späť do menu</a>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ball = document.getElementById('ball');
+            const court = document.getElementById('court');
+            const scoreEl = document.getElementById('score');
+            const feedback = document.getElementById('feedback');
+            const completedMsg = document.getElementById('completed-message');
+            let score = 0;
+            let vy = 0;
+            let vx = 0;
+            let y = 100;
+            let x = 132;
+            let gravity = 0.55;
+            let bounce = -10.5;
+            let running = false; // Don't start animation yet
+            let started = false;
+            let animationId = null;
+            let groundY = court.offsetHeight - 56 - 32; // ball height + ground height
+            let courtWidth = court.offsetWidth;
+            let courtHeight = court.offsetHeight;
+            let lastTap = 0;
+
+            // Check if already completed
+            if (localStorage.getItem('minigame_prosecco') === 'completed') {
+                completedMsg.style.display = 'block';
+                // Do not hide the ball or stop the game
+            }
+
+            function resetBall() {
+                x = Math.random() * (courtWidth - 56);
+                y = 100;
+                vy = 0;
+                vx = 0;
+                updateBall();
+                running = false;
+                started = false;
+            }
+
+            function updateBall() {
+                ball.style.left = x + 'px';
+                ball.style.top = y + 'px';
+            }
+
+            function showFeedback(msg, correct) {
+                feedback.textContent = msg;
+                feedback.className = 'feedback ' + (correct ? 'correct' : 'incorrect');
+                feedback.style.display = 'block';
+                setTimeout(() => { feedback.style.display = 'none'; }, 1200);
+            }
+
+            function animate() {
+                if (!running) return;
+                vy += gravity;
+                y += vy;
+                x += vx;
+                // Wall bounce
+                if (x < 0) { x = 0; vx = -vx * 0.7; }
+                if (x > courtWidth - 56) { x = courtWidth - 56; vx = -vx * 0.7; }
+                // Ball hits ground
+                if (y >= groundY) {
+                    y = groundY;
+                    vy = 0;
+                    vx = 0;
+                    running = false;
+                    started = false;
+                    showFeedback('Lopta spadla! Skús to znova!', false);
+                    setTimeout(() => {
+                        score = 0;
+                        scoreEl.textContent = score;
+                        resetBall();
+                    }, 1200);
+                    return;
+                }
+                updateBall();
+                animationId = requestAnimationFrame(animate);
+            }
+
+            function hitBall(event) {
+                if (!started) {
+                    started = true;
+                    running = true;
+                    animate();
+                }
+                if (!running) return;
+                // Calculate hit direction based on click/tap position
+                let rect = court.getBoundingClientRect();
+                let cx = x + 28; // ball center
+                let cy = y + 28;
+                let mx, my;
+                if (event.touches && event.touches.length > 0) {
+                    mx = event.touches[0].clientX - rect.left;
+                    my = event.touches[0].clientY - rect.top;
+                } else {
+                    mx = event.clientX - rect.left;
+                    my = event.clientY - rect.top;
+                }
+                // Calculate angle
+                let dx = mx - cx;
+                let dy = my - cy;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                // Only allow hit if click is on the ball
+                if (dist > 50) return;
+                // Give the ball an upward velocity and a bit of horizontal
+                vy = bounce - Math.random() * 2.5;
+                vx = dx * 0.18 + (Math.random() - 0.5) * 2;
+                score++;
+                scoreEl.textContent = score;
+                if (score >= 10) {
+                    running = false;
+                    localStorage.setItem('minigame_prosecco', 'completed');
+                    completedMsg.style.display = 'block';
+                    ball.style.display = 'none';
+                    showFeedback('Gratulujem! Prosecco je tvoje!', true);
+                    return;
+                }
+            }
+
+            ball.addEventListener('mousedown', hitBall);
+            ball.addEventListener('touchstart', function(e) { hitBall(e); }, { passive: false });
+
+            // Responsive
+            window.addEventListener('resize', () => {
+                courtWidth = court.offsetWidth;
+                courtHeight = court.offsetHeight;
+                groundY = court.offsetHeight - 56 - 32;
+                if (y > groundY) y = groundY;
+                updateBall();
+            });
+
+            // Start game
+            resetBall();
+        });
+    </script>
+</body>
+</html> 
