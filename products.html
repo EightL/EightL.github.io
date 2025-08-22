@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Products | Martin Ševčík</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/index.css">
+<link rel="stylesheet" href="css/products.css">
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <nav>
+        <a href="index.html" class="brand">Martin Ševčík</a>
+        <span class="menu-toggle">☰</span>
+        <ul>
+          <li><a href="index.html#about">About</a></li>
+          <li><a href="index.html#projects">Projects</a></li>
+          <li><a href="current.html">Research</a></li>
+          <li><a href="products.html" class="active">Products</a></li>
+          <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+    <!-- Hero -->
+    <section class="section hero reveal" style="text-align:center;">
+    <div class="container">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 48px;">
+        <div style="text-align:left;">
+            <h1 style="font-size:2.5rem; font-weight:800; margin-bottom:0.5rem;">ClipAI</h1>
+            <p class="tagline" style="font-size:1.15rem; color:var(--muted); margin-bottom:1.2rem;">
+            <em>Instant AI summaries & explanations for any selected text.</em>
+            </p>
+            <p style="font-size:1.05rem; margin-bottom:0.5rem;">
+            <strong>Status:</strong> Official 1.0 Release ✦ macOS & Windows
+            </p>
+        </div>
+        <div style="text-align:center;">
+            <img src="assets/clipAI_banner.png" alt="ClipAI logo" style="width:100%; max-width:512px; margin-bottom:0;" />
+        </div>
+        </div>
+    </div>
+    </section>
+
+
+  <!-- Why ClipAI -->
+  <section class="section reveal">
+    <div class="container">
+      <p class="sm-title">Why ClipAI?</p>
+      <p>Reading something dense and just want the gist - fast? ClipAI pops up exactly where you are, grabs your current clipboard text, and processes it with AI to give you a summary or explanation. No browser switching. Low friction = you actually use it.</p>
+      <img src="assets/clipAI_mashup.png" alt="ClipAI Usage" style="width:100%;  margin-bottom:0;" />
+    </div>
+  </section>
+
+  <!-- Core Features -->
+  <section class="section reveal">
+    <div class="container">
+      <p class="sm-title">Core Features</p>
+      <div class="projects-grid">
+      <!-- Example flip card -->
+      <article class="project-card">
+        <div class="card-inner">
+          <!-- Front -->
+          <div class="card-front">
+            <h3>One Hotkey</h3>
+            <p>Press once to open, again to hide. Summarize instantly from clipboard text.</p>
+          </div>
+          <!-- Back -->
+          <div class="card-back">
+            <img src="assets/clipai_hotkey.png" alt="One Hotkey Feature" />
+          </div>
+        </div>
+      </article>
+        <article class="project-card">
+        <div class="card-inner">
+          <!-- Front -->
+          <div class="card-front">
+            <h3>Multi-Provider</h3>
+            <p>Supports OpenAI, Gemini, Anthropic, Groq, Grok via OpenRouter. Bring your own keys.</p>
+          </div>
+          <!-- Back -->
+          <div class="card-back">
+            <img src="assets/clipai_api.png" alt="Multi-Provider Feature" />
+          </div>
+        </div>
+      </article>
+              <article class="project-card">
+          <div class="project-body">
+            <h3>Privacy First</h3>
+            <p>No telemetry, no analytics. API keys stored locally only.</p>
+          </div>
+        </article>
+
+        <article class="project-card">
+        <div class="card-inner">
+          <!-- Front -->
+          <div class="card-front">
+            <h3>Custom Prompts</h3>
+            <p>Use defaults or create your own summary/explanation styles.</p>
+          </div>
+          <!-- Back -->
+          <div class="card-back">
+            <img src="assets/ClipAISettings2.png" alt="Multi-Provider Feature" />
+          </div>
+        </div>
+      </article>
+      <article class="project-card">
+          <div class="project-body">
+              <h3>Themes & Markdown</h3>
+              <p>Light, Dark, Midnight, Forest, Rose, Amber, High Contrast. Flexible Markdown modes.</p>
+            </div>
+        </article>
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- Video Preview -->
+
+  <section class="section reveal" >
+        <div class="container">
+            <p class="sm-title">App Preview</p>
+        </div>
+      <div class="container" style="text-align:center;">
+      <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.15); margin-top:24px;">
+        <iframe src="https://www.youtube.com/embed/WUTVh-rNwBE?mute=1" title="ClipAI App Preview"
+          style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allow="autoplay; encrypted-media" allowfullscreen
+          src="https://www.youtube.com/embed/WUTVh-rNwBE?mute=1">
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Downloads -->
+  <section class="section reveal">
+      <div class="container">
+        <p class="sm-title">Download</p>
+      <div style="display:flex; justify-content:center; gap:32px; margin-top:40px; flex-wrap:wrap;">
+        <!-- Mac -->
+
+        <div>
+          <h3 class="sm-title">macOS</h3>
+          <a href="https://github.com/EightL/ClipAI/releases/download/v1.0.0/ClipAI-1.0.0-mac-arm64.dmg" download class="btn" style="padding:12px 24px; font-size:1.1em; background:#3a3a3a; color:#fff; border-radius:8px; text-decoration:none; display:inline-block; min-width:320px; text-align:center;">
+            <i class="fas fa-download"></i> Download for Mac (ARM64, 90.1MB)
+          </a>
+        </div>
+        <!-- Windows -->
+        <div>
+          <h3 class="sm-title">Windows</h3>
+          <button id="win-toggle" class="btn-outline" style="padding:12px 24px; font-size:1.1em; border-radius:8px; display:inline-block; cursor:pointer; min-width:360px; min-height:55px; text-align:center;">
+            <i class="fab fa-windows"></i> Download for Windows
+          </button>
+          <div id="win-options" style="display:none; margin-top:16px; text-align:left;">
+            <a href="https://github.com/EightL/ClipAI/releases/download/v1.0.0/ClipAI-1.0.0-win.exe" class="btn" download target="_blank" rel="noopener" style="margin-bottom:8px; display:block; text-align:center; background:#3a3a3a; color:#fff; border-radius:8px; min-width:320px;">
+              <i class="fas fa-download"></i> Win (x86, 148MB)
+            </a>
+            <a href="https://github.com/EightL/ClipAI/releases/download/v1.0.0/ClipAI-1.0.0-win-x64.exe" class="btn" download target="_blank" rel="noopener" style="margin-bottom:8px; display:block; text-align:center; background:#3a3a3a; color:#fff; border-radius:8px; min-width:320px;">
+              <i class="fas fa-download"></i> Win (x64, 72.6MB)
+            </a>
+            <a href="https://github.com/EightL/ClipAI/releases/download/v1.0.0/ClipAI-1.0.0-win-arm64.exe" class="btn" download target="_blank" rel="noopener" style="display:block; text-align:center; background:#3a3a3a; color:#fff; border-radius:8px; min-width:320px;">
+              <i class="fas fa-download"></i> Win (ARM64, 76.2MB)
+            </a>
+          </div>
+        </div>
+        <div>
+        <h3 class="sm-title">GitHub</h3>
+        <a href="https://github.com/EightL/ClipAI" download class="btn" style="padding:12px 24px; font-size:1.1em; background:#3a3a3a; color:#fff; border-radius:8px; text-decoration:none; display:inline-block; min-width:320px; text-align:center;">
+            <i class="fab fa-github"></i>
+             See GitHub Repo
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Support -->
+  <section class="section reveal" style="text-align:center;">
+    <div class="container">
+      <p class="sm-title">Support Development</p>
+      <p>If you like ClipAI, consider supporting future updates.</p>
+      <a href="https://buymeacoffee.com/eightl" target="_blank">
+        <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me a Coffee" height="48" style="border-radius:6px;box-shadow:0 2px 8px -4px #0003;" />
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>© <span id="year"></span> Martin Ševčík — All rights reserved.</footer>
+
+  <!-- Scripts -->
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById('win-toggle').onclick = function() {
+      var opts = document.getElementById('win-options');
+      opts.style.display = opts.style.display === 'none' ? 'block' : 'none';
+    };
+  </script>
+</body>
+</html>

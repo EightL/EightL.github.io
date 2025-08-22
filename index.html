@@ -22,6 +22,7 @@
           <li><a href="#about">About</a></li>
           <li><a href="#projects">Projects</a></li>
           <li><a href="current.html">Research</a></li>
+            <li><a href="products.html">Products</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
       </nav>
@@ -37,7 +38,7 @@
         <div>
           <p class="sm-title">Portfolio</p>
           <h1>Martin Ševčík</h1>
-          <p class="tagline">Computer Science Student at BUT FIT ✦ Software Developer ✦ RL Enthusiast</p>
+          <p class="tagline">Computer Science Student at BUT FIT ✦ Software Developer ✦ Machine-Learning <i class="fas fa-heart"></i></p>
           <div class="cta-row">
             <a href="pdfs/CV_Martin_Sevcik.pdf" class="btn-outline" target="_blank" rel="noopener">
               <i class="fas fa-file-download"></i>
@@ -62,7 +63,8 @@
     <div class="container info-grid">
       <div>
         <p class="sm-title">About Me</p>
-        <p>Second-year Information-Technology student at <strong>Brno University of Technology (FIT)</strong> seeking a summer internship or junior software-development role. I enjoy mastering new languages, writing clean code and learning through practice.</p>
+        <p style="margin-bottom: 12px;">Hello, I'm a 2nd year computer science student at BUT FIT. Right now, I'm keen on studying Machine Learning concepts such as Reinforcement Learning for my upcoming bachelor's thesis.</p>
+        <p>In my free time I live to create new stuff (very original line), I just released <a href="products.html" style="font-weight:600; text-decoration:underline; color:var(--fg);">ClipAI</a>, a tool for instant AI summaries and explanations.</p>
       </div>
       <div>
         <p class="sm-title">Hobbies</p>
@@ -72,8 +74,27 @@
           <li>Working out</li>
           <li>Running</li>
           <li>Fashion</li>
+          <li>Philosophy</li>
         </ul>
       </div>
+    </div>
+  </section>
+
+  <section id="New App" class="section reveal">
+    <div class="container">
+      <p class="sm-title">New App</p>
+      <a href="products.html" style="text-decoration: none; color: inherit;">
+        <article class="project-card" style="cursor: pointer;">
+          <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <div style="display: flex; align-items: center; gap: 1.2rem;">
+              <h1 style="font-size:2.5rem; font-weight:800; margin-bottom:0;">ClipAI</h1>
+              <p class="tagline" style="font-size:1.15rem; color:var(--muted); margin-bottom:0;"><em>  Instant AI summaries & explanations for any selected text.</em></p>
+            </div>
+            <p style="font-size:1.05rem;"><strong>Status:</strong> Official 1.0 Release ✦ macOS & Windows</p>
+          </div>
+          <img src="assets/clipAI_mashup.png" alt="ClipAI logo" style=" max-width:100%;" />
+        </article>
+      </a>
     </div>
   </section>
 
@@ -291,7 +312,7 @@
   </section>
 
   <!-- Footer -->
-  <footer>© <span id="year"></span> Martin Ševčík — All rights reserved. <a href="love.html" style="text-decoration: none; color: inherit; margin-left: 10px; opacity: 0.7; transition: opacity 0.3s ease;" title="💕">💕</a></footer>
+  <footer>© <span id="year"></span> Martin Ševčík — All rights reserved.</footer>
 
   <!-- Scripts -->
   <script src="js/main.js"></script>
