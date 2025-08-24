@@ -13,23 +13,7 @@
 </head>
 <body>
   <!-- Header -->
-  <header>
-    <div class="container">
-      <nav>
-        <a href="#" class="brand">Martin Ševčík</a>
-        <span class="menu-toggle">☰</span>
-        <ul>
-          <li><a href="#about">About</a></li>
-          <li><a href="#projects">Projects</a></li>
-          <li><a href="current.html">Research</a></li>
-            <li><a href="products.html">Products</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-
-
+  <header></header>
 
   <!-- Hero -->
   <section class="section hero reveal">
@@ -103,6 +87,26 @@
     <div class="container">
       <p class="sm-title">Featured Projects</p>
       <div class="projects-grid">
+        <!-- Interpres Document Translation -->
+        <article class="project-card">
+          <a href="interpres.html" class="card-link"></a>
+          <img src="assets/interpres/Interpres_small.jpg" alt="Interpres app screenshot" class="project-img" style="object-fit: contain; background:#fff;" />
+          <div class="project-body">
+            <h3>Interpres</h3>
+            <p>Cross-platform document reader with translation & TTS conversion. Upload PDFs/EPUB/DOCX, translate with AI, listen to narration.</p>
+            <ul class="tags">
+              <li>React Native</li>
+              <li>Flask</li>
+              <li>Google AI</li>
+              <li>LLM</li>
+              <li>OCR</li>
+              <li>TTS</li>
+            </ul>
+          </div>
+          <a href="https://github.com/EightL/interpres" class="repo-icon" target="_blank" rel="noopener">
+            <i class="fab fa-github"></i>
+          </a>
+        </article>
         <!-- SOL25 Interpreter -->
         <article class="project-card">
           <a href="https://github.com/EightL/sol25-smalltalk-like-interpreter" class="card-link" target="_blank" rel="noopener"></a>
@@ -116,6 +120,7 @@
             <i class="fab fa-github"></i>
           </a>
         </article>
+        
         <!-- IFJ24 Zig-like Compiler -->
         <article class="project-card">
           <a href="https://github.com/EightL/IFJ24-ZIG-like-compiler" class="card-link" target="_blank" rel="noopener"></a>
@@ -184,6 +189,7 @@
             <i class="fab fa-github"></i>
           </a>
         </article>
+
         <!-- Evenmate Expense Splitter -->
         <article class="project-card">
           <a href="https://github.com/EightL/Evenmate-expense-splitter-app" class="card-link" target="_blank" rel="noopener"></a>
@@ -315,6 +321,7 @@
   <footer>© <span id="year"></span> Martin Ševčík — All rights reserved.</footer>
 
   <!-- Scripts -->
+  <script src="js/navbar.js"></script>
   <script src="js/main.js"></script>
   <script src="js/index.js"></script>
   <script src="js/modal.js"></script>
