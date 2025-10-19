@@ -5,29 +5,14 @@ body {
   line-height: 1.75;
 }
 
-.container {
-  width: 100%;
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-}
+/* Ensure same container width as index */
+.container { max-width: 1100px !important; }
 
-header {
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+/* Use default container from main.css for consistent navbar width */
 
-a {
-  text-decoration: none;
-  color: var(--fg);
-}
+/* removed header overrides to use the global navbar styles */
 
-a:hover {
-  text-decoration: underline;
-}
+/* removed global anchor overrides to avoid affecting the navbar */
 
 h1 {
   font-size: clamp(2.25rem, 6vw, 3rem);
@@ -50,12 +35,7 @@ h2 {
   margin-right: .4rem;
 }
 
-.back {
-  display: inline-flex;
-  align-items: center;
-  gap: .4rem;
-  font-size: .9rem;
-}
+/* deprecated: back link no longer used */
 
 footer {
   text-align: center;
@@ -65,11 +45,11 @@ footer {
   color: var(--muted);
 }
 
-ul {
+main ul {
   list-style: none inside;
 }
 
-section {
+main section {
   margin-bottom: 2.75rem;
 }
 
@@ -87,7 +67,7 @@ section {
   opacity: 0.8;
 }
 
-li i {
+main li i {
   width: 24px;
   text-align: center;
   margin-right: 8px;

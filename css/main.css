@@ -50,6 +50,39 @@ nav a::after { content: ''; position: absolute; left: 0; bottom: -3px; width: 0;
 nav a:hover::after { width: 100%; }
 .menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; }
 
+/* Dropdown (desktop) */
+nav ul li { position: relative; }
+nav ul li.has-dropdown > a { padding-right: 0; }
+nav ul li.has-dropdown > a::before { content: none; }
+nav ul li .dropdown {
+  position: absolute;
+  left: 0; top: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+  overflow: hidden;
+  display: block;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: max-height .25s ease, opacity .2s ease, transform .25s ease;
+  pointer-events: none;
+  z-index: 1001;
+}
+nav ul li .dropdown a {
+  display: block;
+  padding: .55rem .9rem;
+  white-space: nowrap;
+}
+nav ul li .dropdown a:hover { background: var(--chip-bg); }
+nav ul li.has-dropdown:hover > .dropdown {
+  max-height: 300px;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
 /* Common button styles */
 .btn-outline { 
   display: inline-flex; 
@@ -96,6 +129,21 @@ footer { text-align: center; padding: 2rem 0 4rem; font-size: .85rem; color: var
     transform: translateX(0);
   }
   
+  /* Mobile dropdown behavior */
+  nav ul li .dropdown {
+    position: static;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+    max-height: 0;
+    opacity: 1; /* keep text visible when opened by height */
+    transform: none;
+    transition: max-height .25s ease;
+  }
+  nav ul li .dropdown a { padding-left: 0.5rem; }
+  nav ul li.has-dropdown.open > .dropdown { max-height: 200px; }
+  nav ul li.has-dropdown > a::before { content: none; }
+
   .menu-toggle {
     display: block;
     z-index: 1000;

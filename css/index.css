@@ -214,3 +214,72 @@
     .json-card .s {color:#a5d6ff;}   /* strings */
     .json-card .n {color:#ffa657;}   /* numbers */
     .json-card .p {color:#c9d1d9;}   /* punctuation */
+
+/* Interpres App Screens hover zoom */
+.app-screens { position: relative; overflow: visible; z-index: 10; }
+.app-screens.section { padding: 0; } /* no vertical padding */
+.app-screens .sm-title { margin: 0; }
+.app-screens .container { overflow: visible; }
+.app-screens .info-grid { position: relative; align-items: center; overflow: visible; gap: 0.5rem; margin-top: -1.25rem; margin-bottom: -1.25rem; }
+.app-screens .sm-title { line-height: 1; }
+.app-screens .current-image { margin: 0; }
+.app-screens .current-image img { display: block; }
+.app-screens .current-image { position: relative; z-index: 0; }
+.app-screens .current-image img {
+  transition: transform .35s ease, box-shadow .35s ease, filter .35s ease;
+  border-radius: 8px;
+  transform-origin: center center;
+}
+
+.app-screens .current-image:hover { z-index: 20; }
+.app-screens .current-image:hover img {
+  transform: scale(1.8);
+  box-shadow: 0 30px 100px rgba(0,0,0,0.35);
+  z-index: 1000;
+  position: relative;
+  filter: none;
+}
+
+@media (max-width: 768px) {
+  .app-screens .current-image:hover img { transform: scale(1.35); }
+}
+
+/* High-quality base rendering: render larger and downscale initially */
+.app-screens .current-image img.hq {
+  width: 220%;
+  max-width: none;
+  transform: scale(0.455);
+}
+.app-screens .current-image:hover img.hq {
+  transform: scale(1.18); /* ~2.6x effective of container */
+}
+@media (max-width: 768px) {
+  .app-screens .current-image img.hq { transform: scale(0.6); }
+  .app-screens .current-image:hover img.hq { transform: scale(0.9); }
+}
+
+/* Lightbox for crisp full-size preview */
+.lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(2px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.lightbox-backdrop.active { display: flex; }
+.lightbox-image {
+  max-width: min(96vw, 1600px);
+  max-height: 92vh;
+  border-radius: 10px;
+  box-shadow: 0 20px 80px rgba(0,0,0,.45);
+  transform: scale(.98);
+  opacity: 0;
+  transition: transform .2s ease, opacity .2s ease;
+}
+.lightbox-backdrop.active .lightbox-image { transform: scale(1); opacity: 1; }
+
+/* Make thumbnails feel interactive */
+.app-screens .current-image { cursor: zoom-in; }
