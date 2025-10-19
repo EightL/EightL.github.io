@@ -3,97 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reinforcement Learning Research | Martin Ševčík</title>
+  <title>MARL Research | Martin Ševčík</title>
   <link rel="preconnect" href="https://fonts.gstatic.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/current.css">
+  <link rel="stylesheet" href="css/index-minimal.css">
 </head>
 <body>
-  <div class="container">
-    <header>
-      <a href="index.html" class="back"><i class="fas fa-chevron-left"></i>Back</a>
-      <span>MARL Emergent Coalitions</span>
+  <div class="minimal-container current-container">
+    <header class="current-header">
+      <a href="index.html" class="back-link">← Back</a>
     </header>
 
     <main>
-      <h1>
-        [WIP] Emergent Coalitions<br>
-        in Multi-Agent RL
-      </h1>
-      <p class="lead">My bachelor's thesis investigates whether an explicit <em>coalition bonus&nbsp;α</em> can foster better coordination in a grid‑world arena.</p>
-
-    <section>
-      <h2>Quick Access</h2>
-        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-
-        <div class="access-button-container" style="margin-top: 0;">
-          <a href="pdfs/Reinforcement-Learning-Theory.pdf" target="_blank" rel="noopener" class="access-button">
-            <i class="fas fa-file-pdf"></i>
-            View my study notes
-          </a>
-        </div>
-        <div class="access-button-container" style="margin-top: 0;">
-          <a href="pdfs/Bakalarska_prace_pitch_v2.pdf" target="_blank" rel="noopener" class="access-button">
-            <i class="fas fa-file-powerpoint"></i>
-            Thesis pitch (unofficial)
-          </a>
-        </div>
-      </div>
-    </section>
-
       <section>
-        <h2>Research Goal</h2>
-        <p>Compare <strong>co‑operative</strong> (<span class="tag">α&nbsp;&gt;&nbsp;0</span>) and <strong>competitive</strong> (<span class="tag">α&nbsp;=&nbsp;0</span>) reward structures in a team‑versus‑boss scenario.</p>
+        <h1>Emergent Coalitions in MARL</h1>
+        <p class="lead">Bachelor's thesis explores whether an explicit coalition bonus can unlock better coordination in a grid-world arena.</p>
       </section>
 
       <section>
-        <h2>Arena Environment</h2>
-        <ul>
-          <li><i class="fas fa-th"></i> Discrete <strong>10 × 10 grid</strong> built in Gymnasium.</li>
-          <li><i class="fas fa-box"></i> Joint inventory & role specialisation (gatherers vs fighters).</li>
-          <li><i class="fas fa-dragon"></i> Final boss spawns centrally; joint kill grants coalition bonus.</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2>Key Metrics</h2>
-        <ul>
-          <li><i class="fas fa-stopwatch"></i> <strong>time_to_boss_kill</strong> — steps until boss defeated</li>
-          <li><i class="fas fa-handshake"></i> <strong>num_joint_events</strong> — joint gather / attack counts</li>
-          <li><i class="fas fa-heart"></i> <strong>survival_rate</strong> — agents alive at episode end</li>
-          <li><i class="fas fa-arrows-alt-h"></i> <strong>distance_between_agents</strong> — spatial cohesion</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2>Current Learning Phase</h2>
-        <ul>
-          <li><i class="fas fa-book"></i> Barto & Sutton — RL: An Introduction (chapters 1–8)</li>
-          <li><i class="fas fa-video"></i> David Silver's RL course — lectures 1‑5 completed</li>
-        </ul>
-        <div class="learning-button-container">
-          <a href="learning.html" class="learning-button">
-            <i class="fas fa-graduation-cap"></i>
-            View RL Learning Progress
-          </a>
+        <h2>Quick Access</h2>
+        <div class="link-stack">
+          <a href="pdfs/Reinforcement-Learning-Theory.pdf" target="_blank" rel="noopener" class="link-card">RL notes</a>
+          <a href="pdfs/Bakalarska_prace_pitch_v2.pdf" target="_blank" rel="noopener" class="link-card">Thesis pitch (draft)</a>
         </div>
       </section>
 
       <section>
-        <h2>End of Summer Learning Plan</h2>
-        <p style="margin-top:1.2em;"><strong>Goal:</strong> By the end of the summer, I aim to:</p>
-        <p style="margin-top:1.2em;">
-          Ensure a strong foundation for my research and implementation work by studying not only the fundamentals of reinforcement learning but also the core principles of machine learning and deep learning before the semester begins.
-        </p>
+        <h2>Thesis / learning progress</h2>
+        <div class="progress-group">
+          <span id="progress-toggle" class="reveal-toggle">Click</span>
+          <div id="progress-details" class="progress-details">
+            <span class="status-note">No interesting results yet!</span>
+            <a href="https://github.com/EightL/RL-basics-exercises" target="_blank" rel="noopener" class="progress-link">Some RL/MARL theory and implementations</a>
+            <div class="video-carousel">
+              <button id="prev-btn" class="carousel-btn">← previous</button>
+              <div class="video-container">
+                <video id="carousel-video" width="100%" max-width="500px" autoplay loop muted style="border-radius: 8px;">
+                  <source src="assets/CoalitionGrid.mp4" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              <button id="next-btn" class="carousel-btn">next →</button>
+            </div>
+            <span id="progress-hide" class="reveal-toggle">hide</span>
+          </div>
+        </div>
       </section>
     </main>
 
-    <footer>© <span id="year"></span> Martin Ševčík — All rights reserved. <a href="love.html" style="text-decoration: none; color: inherit; margin-left: 10px; opacity: 0.7; transition: opacity 0.3s ease;" title="💕">💕</a></footer>
-  </div>
-
-  <!-- Scripts -->
-  <script src="js/main.js"></script>
+  <script src="js/index-minimal.js"></script>
 </body>
 </html>

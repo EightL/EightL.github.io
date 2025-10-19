@@ -1,0 +1,179 @@
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #ffffff;
+  color: #000000;
+  line-height: 1.6;
+}
+
+.current-minimal {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2.5rem 1.75rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  text-align: center;
+}
+
+.current-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.back-link {
+  text-decoration: none;
+  color: #000000;
+  letter-spacing: 0.02em;
+}
+
+.back-link:hover {
+  opacity: 0.6;
+}
+
+.page-label {
+  color: #6f6f6f;
+  font-weight: 500;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.lead {
+  margin: 0.75rem 0 0;
+  font-size: 1rem;
+  max-width: 560px;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  align-items: center;
+}
+
+section h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #000000;
+}
+
+p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.plain-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+}
+
+.link-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.link-card {
+  font-size: 0.95rem;
+  text-decoration: none;
+  color: #000000;
+}
+
+.link-card:hover {
+  text-decoration: underline;
+}
+
+.toggle-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.toggle-link {
+  font-size: 0.95rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.toggle-link:hover {
+  opacity: 0.6;
+}
+
+.progress-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  opacity: 0;
+  transform: translateY(8px);
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.35s ease, transform 0.35s ease, max-height 0.35s ease, margin 0.35s ease;
+}
+
+.progress-details.revealed {
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 220px;
+  margin-top: 0.4rem;
+}
+
+.progress-link {
+  font-size: 0.95rem;
+  color: #000000;
+  text-decoration: none;
+}
+
+.progress-link:hover {
+  text-decoration: underline;
+}
+
+footer {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #6f6f6f;
+}
+
+.status-note {
+  font-size: 5rem;
+  color: #6f6f6f;
+  
+}
+
+@media (max-width: 520px) {
+  .current-minimal {
+    padding: 2rem 1.25rem 2.5rem;
+  }
+
+  .current-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  main {
+    gap: 1.8rem;
+  }
+}
