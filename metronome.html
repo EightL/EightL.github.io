@@ -210,7 +210,8 @@
         
         <div class="info">
             Requires browser with WebBluetooth support<br>
-            (Chrome, Edge, or Opera recommended)
+            (Chrome, Edge, or Opera recommended)<br>
+            <small id="debugInfo"></small>
         </div>
     </div>
 
@@ -244,11 +245,26 @@
         const rhythmSelect = document.getElementById('rhythmSelect');
         const playBtn = document.getElementById('playBtn');
         const rhythmInfo = document.getElementById('rhythmInfo');
+        const debugInfo = document.getElementById('debugInfo');
         
-        // Check WebBluetooth support
+        // Check WebBluetooth support and show debug info
         if (!navigator.bluetooth) {
             status.textContent = 'WebBluetooth not supported in this browser';
             connectBtn.disabled = true;
+        } else {
+            // Check if we're on mobile and provide specific guidance
+            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isSecure = location.protocol === 'https:' || location.hostname === 'localhost';
+            
+            debugInfo.textContent = `Mobile: ${isMobile}, Secure: ${isSecure}, Browser: ${navigator.userAgent.split(' ')[0]}`;
+            
+            if (isMobile) {
+                status.textContent = 'Mobile detected - make sure ESP32 is powered on and nearby';
+            }
+            
+            if (!isSecure && !isMobile) {
+                status.textContent = 'Warning: WebBluetooth requires HTTPS on desktop';
+            }
         }
         
         // Connect to device
@@ -257,9 +273,25 @@
                 status.textContent = 'Connecting...';
                 status.className = 'status disconnected';
                 
-                device = await navigator.bluetooth.requestDevice({
-                    filters: [{ services: [SERVICE_UUID] }]
-                });
+                // Try different connection methods for better mobile compatibility
+                let deviceOptions = {
+                    filters: [{ services: [SERVICE_UUID] }],
+                    optionalServices: [SERVICE_UUID]
+                };
+                
+                // For mobile, also try name-based filtering
+                const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                if (isMobile) {
+                    deviceOptions = {
+                        filters: [
+                            { name: "ESP32-Metronome" },
+                            { namePrefix: "ESP32" }
+                        ],
+                        optionalServices: [SERVICE_UUID]
+                    };
+                }
+                
+                device = await navigator.bluetooth.requestDevice(deviceOptions);
                 
                 device.addEventListener('gattserverdisconnected', onDisconnected);
                 
@@ -285,7 +317,20 @@
                 
             } catch (error) {
                 console.error('Connection error:', error);
-                status.textContent = 'Connection failed: ' + error.message;
+                let errorMsg = 'Connection failed: ' + error.message;
+                
+                // Provide more helpful error messages for common issues
+                if (error.name === 'NotFoundError') {
+                    errorMsg = 'ESP32 not found. Make sure it\'s powered on and nearby.';
+                } else if (error.name === 'SecurityError') {
+                    errorMsg = 'Security error. Make sure you\'re using HTTPS and clicked the button directly.';
+                } else if (error.name === 'NotSupportedError') {
+                    errorMsg = 'WebBluetooth not supported. Try Chrome on Android or Edge on Windows.';
+                } else if (error.message.includes('User cancelled')) {
+                    errorMsg = 'Connection cancelled. Click Connect to try again.';
+                }
+                
+                status.textContent = errorMsg;
                 status.className = 'status disconnected';
             }
         });
