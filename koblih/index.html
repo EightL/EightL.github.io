@@ -427,7 +427,7 @@
         /* Perch image */
         #perch-img {
             position: absolute;
-            bottom: 60px;
+            bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
             width: 170px;
@@ -439,12 +439,12 @@
         /* Parrot zone */
         #parrot-zone {
             position: absolute;
-            bottom: 185px;
+            bottom: 140px;
             isolation: isolate;
             left: 50%;
             transform: translateX(-50%);
-            width: 140px;
-            height: 160px;
+            width: 174px;
+            height: 198px;
             display: flex;
             align-items: flex-end;
             justify-content: center;
@@ -474,7 +474,7 @@
         }
 
         #parrot-img {
-            width: 200px;
+            width: 240px;
             height: auto;
             image-rendering: pixelated;
             display: block;
@@ -488,7 +488,7 @@
         }
 
         #parrot-img.laying {
-            width: 170px;
+            width: 204px;
             transform: translateY(30px);
         }
 
@@ -513,7 +513,7 @@
         /* Thought Bubble (Emotes/Cravings) */
         #thought-bubble {
             position: absolute;
-            top: -25%;
+            top: -20%;
             left: -15%;
             width: 65px;
             height: 54px;
@@ -672,6 +672,8 @@
             scrollbar-width: thin;
             scrollbar-color: #3d2010 transparent;
             -webkit-overflow-scrolling: touch;
+            /* Prevent back/forward navigation on mobile when swiping tray */
+            overscroll-behavior-x: none;
         }
 
         .item-card {
@@ -1327,7 +1329,6 @@
                     <div id="settings-title">SETTINGS</div>
                     <div id="settings-main">
                         <div style="display:flex;flex-direction:column;gap:12px;width:100%;">
-                            <button class="settings-btn" id="debug-coins-btn">+100 Coins (Debug)</button>
                             <button class="settings-btn danger" id="reset-btn">&#x26A0; Reset Progress</button>
                             <button class="settings-btn" id="settings-close-btn">Close</button>
                         </div>
@@ -1454,6 +1455,11 @@
         };
 
         const DECOR_ORDER = ['balloons', 'bells', 'bow_tie', 'mirror', 'swing'];
+
+        const CARPET_VARIANTS = [
+            { key: 'red_carpet', label: 'Red Carpet', price: 55, img: 'images/red_carpet.png', css: 'position:absolute;bottom:-4%;left:50%;transform:translateX(-50%);width:400px;height:auto;pointer-events:none;' },
+            { key: 'blue_carpet', label: 'Blue Carpet', price: 55, img: 'images/blue_carpet.png', css: 'position:absolute;bottom:-5%;left:50%;transform:translateX(-47%);width:500px;height:auto;pointer-events:none;' },
+        ];
         const BOTTLE_KEYS = ['gin', 'prosecco', 'jack_daniels', 'vodka', 'malibu', 'rizlink'];
         const PLANT_KEYS = ['plant_1', 'plant_2', 'plant_3', 'plant_4', 'plant_5', 'plant_6'];
 
@@ -1564,6 +1570,8 @@
                 activeWindow: null,
                 ownedShelves: [],
                 activeShelf: null,
+                ownedCarpets: [],
+                activeCarpet: null,
                 windowPlants: [null, null],
                 bondLevel: 0,          // 0-100, grows with all positive interactions
                 loginStreak: 0,        // consecutive days played
@@ -1586,6 +1594,8 @@
                         s.activeWindow = parsed.activeWindow || null;
                         s.ownedShelves = parsed.ownedShelves || [];
                         s.activeShelf = parsed.activeShelf || null;
+                        s.ownedCarpets = parsed.ownedCarpets || [];
+                        s.activeCarpet = parsed.activeCarpet || null;
                         // Migrate old single-value fields to arrays
                         if (Array.isArray(parsed.shelfBottles)) {
                             s.shelfBottles = [parsed.shelfBottles[0] || null, parsed.shelfBottles[1] || null];
@@ -1720,6 +1730,18 @@
             }
             function equipShelf(key) { s.activeShelf = key; save(); }
             function hasAnyShelf() { return (s.ownedShelves || []).length > 0; }
+            // Carpets
+            function getActiveCarpet() { return s.activeCarpet || null; }
+            function ownsCarpet(key) { return (s.ownedCarpets || []).includes(key); }
+            function buyCarpet(key) {
+                const v = CARPET_VARIANTS.find(c => c.key === key);
+                if (!v || !spendCoins(v.price)) return false;
+                if (!s.ownedCarpets) s.ownedCarpets = [];
+                if (!s.ownedCarpets.includes(key)) s.ownedCarpets.push(key);
+                save(); return true;
+            }
+            function equipCarpet(key) { s.activeCarpet = key; save(); }
+            function unequipCarpet() { s.activeCarpet = null; save(); }
             // Window / shelf decor (2-slot arrays)
             function getWindowPlants() { return s.windowPlants || [null, null]; }
             function setWindowPlant(key) {
@@ -1760,7 +1782,7 @@
             }
 
             load();
-            return { get, modStat, addCoins, spendCoins, addItem, useItem, setHighScore, setHighScoreJump, getBond, modBond, checkDailyLogin, ownsRoom, buyRoom, equipRoom, ownsVanity, buyVanity, toggleVanity, getEquippedVanity, getFurnitureLevel, upgradeFurniture, getActiveWindow, ownsWindow, buyWindow, equipWindow, hasAnyWindow, getActiveShelf, ownsShelf, buyShelf, equipShelf, hasAnyShelf, getWindowPlants, setWindowPlant, removeWindowPlant, getShelfBottles, setShelfBottle, removeShelfBottle, reset, save };
+            return { get, modStat, addCoins, spendCoins, addItem, useItem, setHighScore, setHighScoreJump, getBond, modBond, checkDailyLogin, ownsRoom, buyRoom, equipRoom, ownsVanity, buyVanity, toggleVanity, getEquippedVanity, getFurnitureLevel, upgradeFurniture, getActiveWindow, ownsWindow, buyWindow, equipWindow, hasAnyWindow, getActiveShelf, ownsShelf, buyShelf, equipShelf, hasAnyShelf, getActiveCarpet, ownsCarpet, buyCarpet, equipCarpet, unequipCarpet, getWindowPlants, setWindowPlant, removeWindowPlant, getShelfBottles, setShelfBottle, removeShelfBottle, reset, save };
         })();
 
         // ════════════════════════════════════════════════
@@ -2018,9 +2040,9 @@
             }
 
             function getZone(relY) {
-                if (relY < 0.30) return 'head';
-                if (relY < 0.68) return 'body';
-                return 'belly';
+                if (relY < 0.30) return 'top';      // top 30% → hand_pet
+                if (relY < 0.70) return 'mid';      // 30-50%  → hand_scratch_down
+                return 'body';                       // rest     → hand_scratch_up
             }
 
             function getThought() { return currentThought; }
@@ -2219,14 +2241,20 @@
                     const dx = e.clientX - pending.startX;
                     const dy = e.clientY - pending.startY;
                     const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    // If we see significant vertical movement, proactively block browser gestures
+                    if (Math.abs(dy) > 4 && Math.abs(dy) > Math.abs(dx)) {
+                        if (e.cancelable) e.preventDefault();
+                    }
+
                     if (dist > DRAG_THRESH) {
                         // Pure horizontal swipe → let tray scroll, drop pending
-                        if (Math.abs(dx) > Math.abs(dy) * 1.8) {
+                        if (Math.abs(dx) > Math.abs(dy) * 1.6) {
                             pending = null;
                             return;
                         }
                         // Otherwise commit to drag
-                        e.preventDefault();
+                        if (e.cancelable) e.preventDefault();
                         activateDrag(pending.key, e.clientX, e.clientY);
                     }
                     return;
@@ -2243,15 +2271,15 @@
 
                         // Visuals for hovering
                         isDirectHover = true;
-                        if (zone === 'head') {
+                        if (zone === 'top') {
                             Parrot.lock('pet_head', 0);
-                            Parrot.showHand('images/hand_scratch_up.png', lx, ly);
-                        } else if (zone === 'belly') {
-                            Parrot.lock('laying', 0);
                             Parrot.showHand('images/hand_pet.png', lx, ly);
-                        } else {
+                        } else if (zone === 'mid') {
                             Parrot.lock('pet_front', 0);
-                            Parrot.showHand('images/hand_pet.png', lx, ly);
+                            Parrot.showHand('images/hand_scratch_down.png', lx, ly);
+                        } else {
+                            Parrot.lock('laying', 0);
+                            Parrot.showHand('images/hand_scratch_up.png', lx, ly);
                         }
 
                         if (canDirectPet) {
@@ -2306,18 +2334,18 @@
                 if (zone !== petZone) {
                     petZone = zone;
                     Audio.sfx.pet();
-                    if (zone === 'head') {
+                    if (zone === 'top') {
                         Parrot.lock('pet_head', 0);
-                        Parrot.showHand('images/hand_scratch_up.png', lx, ly);
-                    } else if (zone === 'belly') {
-                        Parrot.lock('laying', 0);
                         Parrot.showHand('images/hand_pet.png', lx, ly);
-                    } else {
+                    } else if (zone === 'mid') {
                         Parrot.lock('pet_front', 0);
-                        Parrot.showHand('images/hand_pet.png', lx, ly);
+                        Parrot.showHand('images/hand_scratch_down.png', lx, ly);
+                    } else {
+                        Parrot.lock('laying', 0);
+                        Parrot.showHand('images/hand_scratch_up.png', lx, ly);
                     }
                 } else {
-                    const handSrc = zone === 'head' ? 'images/hand_scratch_up.png' : 'images/hand_pet.png';
+                    const handSrc = zone === 'top' ? 'images/hand_pet.png' : zone === 'mid' ? 'images/hand_scratch_down.png' : 'images/hand_scratch_up.png';
                     Parrot.showHand(handSrc, lx, ly);
                 }
             }
@@ -2487,7 +2515,7 @@
             }
 
             function applyPet(key, zone) {
-                const delta = zone === 'head' ? 15 : zone === 'belly' ? 12 : 8;
+                const delta = zone === 'top' ? 15 : zone === 'mid' ? 12 : 8;
                 State.modStat('happy', delta);
                 Audio.sfx.chirp();
                 FX.burst('💛', 190, 240, 5);
@@ -2820,6 +2848,33 @@
                         }
                         grid.appendChild(card);
                     }
+
+                    // Carpets
+                    const hdrCarpet = document.createElement('div');
+                    hdrCarpet.className = 'shop-section-header';
+                    hdrCarpet.textContent = 'CARPETS';
+                    grid.appendChild(hdrCarpet);
+                    const activeCarpet = State.getActiveCarpet();
+                    for (const v of CARPET_VARIANTS) {
+                        const owned = State.ownsCarpet(v.key);
+                        const isEquipped = activeCarpet === v.key;
+                        const canAfford = !owned && coins >= v.price;
+                        const card = document.createElement('div');
+                        card.className = 'shop-item' + (isEquipped ? ' equipped' : !owned && !canAfford ? ' cant-afford' : '');
+                        let badge;
+                        if (isEquipped) badge = `<span class="shop-room-badge equipped">Equipped</span>`;
+                        else if (owned) badge = `<span class="shop-room-badge owned">Equip</span>`;
+                        else badge = `<div class="shop-item-price">&#x1FA99; ${v.price}</div>`;
+                        card.innerHTML = `<img src="${v.img}" alt="${v.label}"><div class="shop-item-name">${v.label}</div>${badge}`;
+                        if (isEquipped) {
+                            card.addEventListener('click', () => { State.unequipCarpet(); applyFurniture(); Audio.sfx.click(); render(); showFlash('Carpet removed!'); });
+                        } else if (owned) {
+                            card.addEventListener('click', () => { State.equipCarpet(v.key); applyFurniture(); Audio.sfx.click(); render(); showFlash('Carpet equipped!'); });
+                        } else if (canAfford) {
+                            card.addEventListener('click', () => { if (!State.buyCarpet(v.key)) return; State.equipCarpet(v.key); Audio.sfx.buy(); HUD.updateCoins(); applyFurniture(); render(); showFlash('Carpet bought!'); });
+                        }
+                        grid.appendChild(card);
+                    }
                 }
             }
 
@@ -2919,6 +2974,18 @@
             if (!layer) return;
             layer.innerHTML = '';
 
+            // Carpet (floor, rendered first so it's behind everything)
+            const activeCarpet = State.getActiveCarpet();
+            if (activeCarpet) {
+                const carpetVariant = CARPET_VARIANTS.find(c => c.key === activeCarpet);
+                if (carpetVariant) {
+                    const img = document.createElement('img');
+                    img.src = carpetVariant.img;
+                    img.style.cssText = carpetVariant.css;
+                    layer.appendChild(img);
+                }
+            }
+
             // Cage (left wall)
             const cageLevel = State.getFurnitureLevel('cage');
             if (cageLevel > 0) {
@@ -3005,7 +3072,7 @@
             const W = 480, H = 664;
             const GRAV = 0.16;
             const FLAP_V = -5.0;
-            const PIPE_SPD = 1.9;
+            let PIPE_SPD = 1.9;
             const PIPE_GAP = 200;
             const PIPE_W = 54;
             const SPAWN_INT = 140;  // frames between pipes
@@ -3081,6 +3148,7 @@
                     { x: 160, y: 130, w: 75, spd: 0.28 },
                 ];
                 score = 0; coinsEarned = 0; frame = 0;
+                PIPE_SPD = 1.9;
                 running = true; started = false; dead = false;
                 birdState = 'idle'; birdStateTimer = 0;
                 updateCoinsDisplay();
@@ -3093,6 +3161,11 @@
             }
 
             function stop() {
+                if (running && !dead && coinsEarned > 0) {
+                    State.addCoins(coinsEarned);
+                    HUD.updateCoins();
+                    coinsEarned = 0;
+                }
                 running = false;
                 if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
             }
@@ -3147,15 +3220,17 @@
                     p.x -= PIPE_SPD;
                     if (!p.passed && p.x + PIPE_W < BX) {
                         p.passed = true; score++;
-                        // Scale coins by score tier: +1 base, +1 per 5 score, max +5
+                        // Increase game speed slightly per pipe
+                        PIPE_SPD += 0.04;
+                        // Scale coins by score tier, but cut in half
                         const bonus = Math.min(4, Math.floor(score / 5));
-                        const earned = 1 + bonus;
+                        const earned = Math.max(1, Math.floor((1 + bonus) / 2));
                         coinsEarned += earned;
                         Audio.sfx.coin();
-                        // Score milestones: give extra burst of coins
-                        if (score === 10) { coinsEarned += 15; }
-                        else if (score === 25) { coinsEarned += 30; }
-                        else if (score === 50) { coinsEarned += 60; }
+                        // Score milestones: give extra burst of coins (halved)
+                        if (score === 10) { coinsEarned += 7; }
+                        else if (score === 25) { coinsEarned += 15; }
+                        else if (score === 50) { coinsEarned += 30; }
                         updateCoinsDisplay();
                     }
                 }
@@ -3167,7 +3242,7 @@
                     s.x -= PIPE_SPD;
                     const dx = s.x - (BX + BW / 2), dy = s.y - (bird.y + BH / 2);
                     if (Math.abs(dx) < 26 && Math.abs(dy) < 26) {
-                        s.done = true; coinsEarned += 2; Audio.sfx.coin(); updateCoinsDisplay();
+                        s.done = true; coinsEarned += 1; Audio.sfx.coin(); updateCoinsDisplay(); // 1 coin instead of 2
                     }
                 }
                 seeds = seeds.filter(s => s.x > -5);
@@ -3473,6 +3548,11 @@
             }
 
             function stop() {
+                if (running && !dead && coinsEarned > 0) {
+                    State.addCoins(coinsEarned);
+                    HUD.updateCoins();
+                    coinsEarned = 0;
+                }
                 running = false;
                 if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
             }
@@ -3949,9 +4029,6 @@
                 settingsModal.classList.remove('open');
             }
 
-            document.getElementById('debug-coins-btn').addEventListener('click', () => {
-                State.addCoins(100); HUD.updateCoins(); Audio.sfx.coin();
-            });
             document.getElementById('settings-btn').addEventListener('click', openSettings);
             document.getElementById('settings-close-btn').addEventListener('click', () => { Audio.sfx.click(); closeSettings(); });
 
