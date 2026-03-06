@@ -23,6 +23,9 @@
             min-height: 100vh;
             overflow: hidden;
             font-family: 'Press Start 2P', 'Courier New', monospace;
+            /* Prevent pull-to-refresh and overscroll on mobile */
+            overscroll-behavior: none;
+            touch-action: none;
         }
 
         img {
@@ -138,7 +141,7 @@
 
         /* ===== MAIN SCREEN ===== */
         #hud-top {
-            height: 50px;
+            height: 65px;
             background: #1a0e06;
             border-bottom: 3px solid #3d2010;
             padding: 6px 12px 5px;
@@ -226,18 +229,22 @@
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            gap: 5px;
+            justify-content: space-between;
+            height: 100%;
             flex-shrink: 0;
+            padding-bottom: 2px;
         }
 
         #coin-display {
             display: flex;
             align-items: center;
             gap: 4px;
-            font-size: 9px;
+            font-size: 10px;
+            line-height: 1.2;
             color: #f5c842;
             min-width: 60px;
             justify-content: flex-end;
+            margin-top: 2px;
         }
 
         #settings-btn {
@@ -254,6 +261,47 @@
         #settings-btn:hover {
             opacity: 1;
             transform: rotate(60deg);
+        }
+
+        /* Bond bar in HUD */
+        #bond-bar {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-right: 2px;
+        }
+
+        #bond-heart {
+            font-size: 11px;
+            line-height: 1;
+            transform: translateY(1px);
+        }
+
+        #bond-fill-bg {
+            width: 44px;
+            height: 6px;
+            background: #2a0e14;
+            border: 1px solid #6a1828;
+            border-radius: 3px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        #bond-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e04080, #f08cc0);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 3px;
+        }
+
+        #bond-pct {
+            font-size: 8px;
+            line-height: 1;
+            color: #f08cc0;
+            min-width: 18px;
+            text-align: right;
+            text-shadow: 1px 1px 0 #2a0e14;
         }
 
         /* Settings modal */
@@ -274,12 +322,12 @@
         #settings-box {
             background: #1e1208;
             border: 3px solid #5a3418;
-            padding: 28px 24px;
+            padding: 32px 28px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 20px;
-            min-width: 260px;
+            min-width: 310px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
         }
 
@@ -291,12 +339,12 @@
 
         .settings-btn {
             width: 100%;
-            padding: 10px 8px;
+            padding: 12px 10px;
             background: #2a1508;
             border: 2px solid #5a3418;
             color: #e0a060;
             font-family: 'Press Start 2P', monospace;
-            font-size: 7px;
+            font-size: 8px;
             cursor: pointer;
             transition: background 0.12s, box-shadow 0.12s;
             text-align: center;
@@ -686,12 +734,12 @@
 
         .nav-btn {
             flex: 1;
-            padding: 9px 6px;
+            padding: 12px 6px;
             background: #261508;
             border: 2px solid #5a3418;
             color: #f5c842;
             font-family: 'Press Start 2P', monospace;
-            font-size: 7px;
+            font-size: 8px;
             cursor: pointer;
             transition: background 0.12s, box-shadow 0.12s;
             letter-spacing: 0.5px;
@@ -866,8 +914,8 @@
         }
 
         .shop-item img {
-            width: 64px;
-            height: 64px;
+            width: 80px;
+            height: 80px;
             object-fit: contain;
             image-rendering: pixelated;
         }
@@ -908,6 +956,7 @@
             cursor: pointer;
             display: flex;
             flex-direction: column;
+            min-height: 175px;
             transition: border-color 0.12s, box-shadow 0.12s, transform 0.1s;
         }
 
@@ -1082,6 +1131,127 @@
             image-rendering: pixelated;
             touch-action: none;
         }
+
+        /* ===== MOBILE SCALING ===== */
+        /* Scale #game to fill the viewport on small screens
+           keeping the 480:720 (2:3) aspect ratio intact.
+           All game-internal coordinates stay the same — only CSS scale changes. */
+        @media (max-width: 520px),
+        (max-height: 740px) {
+
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+                /* belt + suspenders: kill every touch behaviour that could scroll the page */
+                touch-action: none;
+                overscroll-behavior: none;
+            }
+
+            #game {
+                /* Use dynamic viewport units so the game fills the visible area
+                   even when the browser chrome (address bar / nav bar) appears/disappears */
+                --game-scale: min(calc(100dvw / 480), calc(100dvh / 720));
+                width: 480px;
+                height: 720px;
+                transform-origin: top left;
+                transform: scale(var(--game-scale));
+                /* Re-centre after scaling  */
+                left: calc((100dvw - 480px * var(--game-scale)) / 2);
+                top: calc((100dvh - 720px * var(--game-scale)) / 2);
+            }
+
+            /* Make HUD elements comfortably large on touch screens */
+            #hud-top {
+                height: 60px;
+                padding: 8px 14px 7px;
+            }
+
+            .stat-bar-bg {
+                height: 13px;
+                border-width: 2px;
+            }
+
+            .stat-icon {
+                width: 18px;
+                height: 18px;
+                font-size: 11px;
+            }
+
+            .stat-icon img {
+                width: 18px;
+                height: 18px;
+            }
+
+            #coin-display {
+                font-size: 12px;
+            }
+
+            #settings-btn {
+                font-size: 18px;
+            }
+
+            #hud-bottom {
+                height: 180px;
+            }
+
+            .item-card {
+                width: 66px;
+                height: 66px;
+            }
+
+            .item-card img {
+                width: 46px;
+                height: 46px;
+            }
+
+            .item-count {
+                font-size: 8px;
+            }
+
+            .nav-btn {
+                padding: 14px 6px;
+                font-size: 9px;
+            }
+
+            #nav-buttons {
+                padding: 6px 10px 12px;
+                gap: 10px;
+            }
+
+            #item-tray {
+                padding: 10px 10px 5px;
+                gap: 8px;
+            }
+
+            /* Settings modal */
+            #settings-box {
+                min-width: 340px;
+                padding: 36px 30px;
+            }
+
+            .settings-btn {
+                padding: 14px 12px;
+                font-size: 9px;
+            }
+
+            #settings-title {
+                font-size: 14px;
+            }
+
+            /* Shop back button */
+            #shop-back-btn {
+                font-size: 9px;
+                padding: 9px 14px;
+            }
+
+            /* Minigame back buttons */
+            #flappy-back-btn,
+            #jump-back-btn {
+                font-size: 9px;
+                padding: 8px 12px;
+            }
+        }
     </style>
 </head>
 
@@ -1140,6 +1310,13 @@
                 </div>
                 <div id="hud-top-right">
                     <div id="coin-display">&#x1FA99; <span id="coin-count">0</span></div>
+                    <div id="bond-bar" title="Bond">
+                        <span id="bond-heart">&#x2764;&#xFE0F;</span>
+                        <div id="bond-fill-bg">
+                            <div id="bond-fill"></div>
+                        </div>
+                        <span id="bond-pct">0</span>
+                    </div>
                     <button id="settings-btn" title="Settings">&#x2699;&#xFE0F;</button>
                 </div>
             </div>
@@ -1284,12 +1461,12 @@
         // width:   rendered width in px
         // offsetY: vertical nudge relative to slot anchor (positive = down)
         const BOTTLE_DISPLAY = {
-            gin:          { width: 45, offsetY: -2 },
-            prosecco:     { width: 60, offsetY: -22 },
+            gin: { width: 45, offsetY: -2 },
+            prosecco: { width: 60, offsetY: -22 },
             jack_daniels: { width: 60, offsetY: -30 },
-            vodka:        { width: 55, offsetY: -22 },
-            malibu:       { width: 60, offsetY: -24 },
-            rizlink:      { width: 60, offsetY: -30 },
+            vodka: { width: 55, offsetY: -22 },
+            malibu: { width: 60, offsetY: -24 },
+            rizlink: { width: 60, offsetY: -30 },
         };
 
         const PLANT_DISPLAY = {
@@ -1379,6 +1556,7 @@
                 coins: 50,
                 inventory: { food: 2, snack: 2, vitamins: 1, medical_kit: 1, playing_toy: 1, bath: 1, clean_tools: 1 },
                 highScore: 0,
+                highScoreJump: 0,
                 activeRoom: 'standard',
                 ownedRooms: ['standard'],
                 ownedFurniture: { cage: 0, perch: 1 },
@@ -1387,7 +1565,9 @@
                 ownedShelves: [],
                 activeShelf: null,
                 windowPlants: [null, null],
-                shelfBottles: [null, null],
+                bondLevel: 0,          // 0-100, grows with all positive interactions
+                loginStreak: 0,        // consecutive days played
+                lastLoginDate: '',     // YYYY-MM-DD string
                 savedAt: Date.now(),
             });
 
@@ -1442,6 +1622,35 @@
                 s.inventory[key]--; save(); return true;
             }
             function setHighScore(n) { if (n > s.highScore) { s.highScore = n; save(); } }
+            function setHighScoreJump(n) { if (n > (s.highScoreJump || 0)) { s.highScoreJump = n; save(); } }
+
+            function getBond() { return s.bondLevel || 0; }
+            function modBond(delta) {
+                const prev = s.bondLevel || 0;
+                s.bondLevel = Math.max(0, Math.min(100, prev + delta));
+                save();
+                // Return milestone if we crossed a threshold
+                const milestones = [25, 50, 75, 100];
+                for (const m of milestones) {
+                    if (prev < m && s.bondLevel >= m) return m;
+                }
+                return null;
+            }
+
+            // Returns { bonus, newStreak } — call once per session on first open
+            function checkDailyLogin() {
+                const today = new Date().toISOString().slice(0, 10);
+                if (s.lastLoginDate === today) return { bonus: 0, streak: s.loginStreak || 0 };
+                const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+                const newStreak = (s.lastLoginDate === yesterday) ? (s.loginStreak || 0) + 1 : 1;
+                s.lastLoginDate = today;
+                s.loginStreak = newStreak;
+                // Bonus scales with streak (5, 10, 15, 20... capped at 50)
+                const bonus = Math.min(50, newStreak * 5);
+                s.coins += bonus;
+                save();
+                return { bonus, streak: newStreak };
+            }
 
             function ownsRoom(key) { return (s.ownedRooms || ['standard']).includes(key); }
             function buyRoom(key) {
@@ -1551,7 +1760,7 @@
             }
 
             load();
-            return { get, modStat, addCoins, spendCoins, addItem, useItem, setHighScore, ownsRoom, buyRoom, equipRoom, ownsVanity, buyVanity, toggleVanity, getEquippedVanity, getFurnitureLevel, upgradeFurniture, getActiveWindow, ownsWindow, buyWindow, equipWindow, hasAnyWindow, getActiveShelf, ownsShelf, buyShelf, equipShelf, hasAnyShelf, getWindowPlants, setWindowPlant, removeWindowPlant, getShelfBottles, setShelfBottle, removeShelfBottle, reset, save };
+            return { get, modStat, addCoins, spendCoins, addItem, useItem, setHighScore, setHighScoreJump, getBond, modBond, checkDailyLogin, ownsRoom, buyRoom, equipRoom, ownsVanity, buyVanity, toggleVanity, getEquippedVanity, getFurnitureLevel, upgradeFurniture, getActiveWindow, ownsWindow, buyWindow, equipWindow, hasAnyWindow, getActiveShelf, ownsShelf, buyShelf, equipShelf, hasAnyShelf, getWindowPlants, setWindowPlant, removeWindowPlant, getShelfBottles, setShelfBottle, removeShelfBottle, reset, save };
         })();
 
         // ════════════════════════════════════════════════
@@ -1644,6 +1853,7 @@
         const Parrot = (() => {
             let imgEl, handEl, ringEl, arcEl, bubbleEl, thoughtImgEl, thoughtTextEl;
             let idleTimer = null;
+            let thoughtTimer = null;
             let locked = false;
             let currentThought = null;
             const CRAVING_POOL = ['food', 'snack', 'vitamins', 'playing_toy', 'bath'];
@@ -1705,29 +1915,43 @@
                 const pick = pool[Math.floor(Math.random() * pool.length)];
                 setImg(pick);
 
-                // Clear temporary text emotes every idle tick
-                if (currentThought && currentThought.type === 'text') {
+                // Always clear the previous thought so they properly cycle
+                if (currentThought) {
                     clearThought();
                 }
 
                 // Chance to spawn a thought/craving/emote
-                if (!currentThought && Math.random() < 0.25) {
+                // Feelings (text emotes) are weighted much more heavily (~65% of all thoughts)
+                if (Math.random() < 0.35) {
                     const stats = State.get().stats;
                     let type = null;
                     let val = null;
 
-                    if (stats.happy > 85 && Math.random() < 0.3) {
-                        type = 'text'; val = '❤️';
-                    } else if (stats.happy < 30 && Math.random() < 0.4) {
-                        type = 'text'; val = '🌩️';
-                    } else if (stats.clean < 30 && Math.random() < 0.4) {
-                        type = 'text'; val = '💩';
-                    } else if (stats.health < 40 && Math.random() < 0.4) {
-                        type = 'text'; val = '🤒';
-                    } else if (stats.hunger < 40 && Math.random() < 0.4) {
-                        type = 'text'; val = '🍩';
+                    // Roll: 65% chance for feeling, 35% chance for item craving
+                    const feelingRoll = Math.random();
+                    if (feelingRoll < 0.65) {
+                        // Feeling bubble — pick based on stats
+                        if (stats.happy > 85 && Math.random() < 0.6) {
+                            type = 'text'; val = '❤️';
+                        } else if (stats.happy > 70 && Math.random() < 0.4) {
+                            type = 'text'; val = '😊';
+                        } else if (stats.happy < 30) {
+                            type = 'text'; val = '🌩️';
+                        } else if (stats.clean < 30) {
+                            type = 'text'; val = '💩';
+                        } else if (stats.health < 40) {
+                            type = 'text'; val = '🤒';
+                        } else if (stats.hunger < 40) {
+                            type = 'text'; val = '🍩';
+                        } else if (stats.hunger > 92) {
+                            type = 'text'; val = '😴';
+                        } else {
+                            // Neutral happy thought
+                            const happyThoughts = ['❤️', '😊', '🎶', '✨'];
+                            type = 'text'; val = happyThoughts[Math.floor(Math.random() * happyThoughts.length)];
+                        }
                     } else {
-                        // Craving items based on low stats
+                        // Item craving based on lowest stat
                         let minStat = 'hunger';
                         let minVal = stats.hunger;
                         if (stats.health < minVal) { minVal = stats.health; minStat = 'health'; }
@@ -1744,6 +1968,9 @@
                             const pool = map[minStat];
                             type = 'item';
                             val = pool[Math.floor(Math.random() * pool.length)];
+                        } else {
+                            // Stats are fine — show a positive feeling
+                            type = 'text'; val = '❤️';
                         }
                     }
 
@@ -1754,6 +1981,7 @@
             }
 
             function showThought(type, value) {
+                if (thoughtTimer) { clearTimeout(thoughtTimer); thoughtTimer = null; }
                 currentThought = { type, value };
                 if (type === 'item') {
                     thoughtImgEl.src = ITEMS[value].img;
@@ -1765,6 +1993,9 @@
                     thoughtImgEl.style.display = 'none';
                 }
                 bubbleEl.style.display = 'flex';
+                // Auto-clear item cravings after 5s, text emotes after 3s
+                const dur = type === 'item' ? 5000 : 3000;
+                thoughtTimer = setTimeout(() => clearThought(), dur);
             }
 
             function showHand(src, lx, ly) {
@@ -1792,13 +2023,14 @@
                 return 'belly';
             }
 
-            function getCraving() { return currentCraving; }
-            function clearCraving() {
-                currentCraving = null;
+            function getThought() { return currentThought; }
+            function clearThought() {
+                if (thoughtTimer) { clearTimeout(thoughtTimer); thoughtTimer = null; }
+                currentThought = null;
                 bubbleEl.style.display = 'none';
             }
 
-            return { init, setImg, bounce, lock, unlock, clearIdle, startIdle, showHand, hideHand, showProgress, hideProgress, getZone, getCraving, clearCraving };
+            return { init, setImg, bounce, lock, unlock, clearIdle, startIdle, showHand, hideHand, showProgress, hideProgress, getZone, getThought, clearThought, showThought };
         })();
 
         // ════════════════════════════════════════════════
@@ -1821,8 +2053,17 @@
                 if (a) a.textContent = c;
                 if (b) b.textContent = c;
             }
-            return { updateStats, updateCoins };
+            function updateBond() {
+                const bond = State.getBond();
+                const fill = document.getElementById('bond-fill');
+                const pct = document.getElementById('bond-pct');
+                if (fill) fill.style.width = bond + '%';
+                if (pct) pct.textContent = bond;
+            }
+            function updateAll() { updateStats(); updateBond(); }
+            return { updateStats, updateCoins, updateBond, updateAll };
         })();
+
 
         // ════════════════════════════════════════════════
         // FX (particles & floats)
@@ -2179,6 +2420,28 @@
                 }
             }
 
+            // Helper: apply bond delta and handle milestone celebrations
+            function applyBond(delta) {
+                const milestone = State.modBond(delta);
+                if (milestone !== null) {
+                    const msgs = {
+                        25: ['🌟 New Friends!', '+30 Coins'],
+                        50: ['💖 Best Buds!', '+50 Coins'],
+                        75: ['🏆 True Bond!', '+75 Coins'],
+                        100: ['👑 Soulmates!', '+100 Coins'],
+                    };
+                    const reward = milestone;
+                    State.addCoins(reward);
+                    HUD.updateCoins();
+                    const [title, coinText] = msgs[milestone];
+                    FX.floatText(title, '#f5c842', 130, 170);
+                    FX.floatText(coinText, '#f5c842', 130, 195);
+                    FX.burst('✨', 190, 210, 12);
+                    Parrot.showThought('text', '🥰');
+                }
+                HUD.updateBond();
+            }
+
             function applyDrop(key) {
                 if (!State.useItem(key)) return;
                 const effects = ITEMS[key].statEffect;
@@ -2216,6 +2479,7 @@
                 }
 
                 checkCraving(key);
+                applyBond(1);
 
                 Parrot.bounce();
                 HUD.updateStats();
@@ -2230,6 +2494,7 @@
                 FX.floatText('💛 Happy!', '#e04080', 140, 250);
 
                 checkCraving(key);
+                applyBond(2); // petting builds more bond
 
                 Parrot.bounce();
                 setTimeout(() => Parrot.unlock(), 1000);
@@ -2254,6 +2519,7 @@
                 }
 
                 checkCraving(key);
+                applyBond(1);
 
                 Parrot.bounce();
                 setTimeout(() => Parrot.unlock(), 2600);
@@ -2305,20 +2571,24 @@
                     }
                 } else if (activeTab === 'decor') {
                     const equippedVanity = State.getEquippedVanity();
+                    const shelfUnlockedForDecor = State.hasAnyShelf();
                     // Regular decor
                     for (const key of DECOR_ORDER) {
                         const item = VANITY_ITEMS[key];
                         const owned = State.ownsVanity(key);
                         const isEquipped = equippedVanity.includes(key);
-                        const canAfford = !owned && coins >= item.price;
+                        const requiresShelf = (key === 'balloons' || key === 'bells');
+                        const isLocked = requiresShelf && !shelfUnlockedForDecor;
+                        const canAfford = !owned && coins >= item.price && !isLocked;
 
                         const card = document.createElement('div');
                         card.className = 'shop-item' +
-                            (isEquipped ? ' equipped' : !owned && !canAfford ? ' cant-afford' : '');
+                            (isEquipped ? ' equipped' : !owned && (!canAfford || isLocked) ? ' cant-afford' : '');
 
                         let badge;
                         if (isEquipped) badge = `<span class="shop-room-badge equipped">Equipped</span>`;
                         else if (owned) badge = `<span class="shop-room-badge owned">Equip</span>`;
+                        else if (isLocked) badge = `<div class="shop-item-owned">&#x1F512; needs shelf</div>`;
                         else badge = `<div class="shop-item-price">&#x1FA99; ${item.price}</div>`;
 
                         card.innerHTML = `
@@ -2329,7 +2599,7 @@
 
                         if (owned) {
                             card.addEventListener('click', () => toggleVanity(key));
-                        } else if (!owned && canAfford) {
+                        } else if (!owned && canAfford && !isLocked) {
                             card.addEventListener('click', () => buyVanity(key));
                         }
 
@@ -2871,13 +3141,22 @@
                     else birdState = 'idle';
                 }
 
-                // Pipes
+                // Pipes — progressive coin rewards
                 if (frame % SPAWN_INT === 0) spawnPipe();
                 for (const p of pipes) {
                     p.x -= PIPE_SPD;
                     if (!p.passed && p.x + PIPE_W < BX) {
                         p.passed = true; score++;
-                        coinsEarned++; Audio.sfx.coin(); updateCoinsDisplay();
+                        // Scale coins by score tier: +1 base, +1 per 5 score, max +5
+                        const bonus = Math.min(4, Math.floor(score / 5));
+                        const earned = 1 + bonus;
+                        coinsEarned += earned;
+                        Audio.sfx.coin();
+                        // Score milestones: give extra burst of coins
+                        if (score === 10) { coinsEarned += 15; }
+                        else if (score === 25) { coinsEarned += 30; }
+                        else if (score === 50) { coinsEarned += 60; }
+                        updateCoinsDisplay();
                     }
                 }
                 pipes = pipes.filter(p => p.x + PIPE_W > -5);
@@ -2921,9 +3200,15 @@
                 State.modStat('health', targetHealth - currentHealth);
                 HUD.updateStats();
 
-                State.addCoins(coinsEarned);
+                // Base end bonus + score-based multiplier
+                const endBonus = 5 + Math.floor(score * 1.5);
+                const total = coinsEarned + endBonus;
+                coinsEarned = total;
+                State.addCoins(total);
                 State.setHighScore(score);
+                State.modBond(Math.min(5, Math.floor(score / 5) + 1)); // bond grows from playing
                 HUD.updateCoins();
+                HUD.updateBond();
             }
 
             function updateCoinsDisplay() {
@@ -3324,14 +3609,16 @@
                 State.modStat('health', targetHealth - currentHealth);
                 HUD.updateStats();
 
-                State.addCoins(coinsEarned);
-
-                // Since jumping yields larger numbers, we could track a separate jumpHighScore if wanted,
-                // but for now we'll just track generic highscore (flappy vs jump might overlap, 
-                // but user just wants a generic score system? Let's just track highscore the same or leave it separate.
-                // We will just award coins).
+                // End bonus scales with score: +5 base + score * 2
+                const endBonus = 5 + Math.floor(score * 2);
+                const total = coinsEarned + endBonus;
+                State.addCoins(total);
+                State.setHighScoreJump(score);
+                State.modBond(Math.min(5, Math.floor(score / 10) + 1)); // bond grows from altitude
                 HUD.updateCoins();
+                HUD.updateBond();
             }
+
 
             function updateCoinsDisplay() {
                 const el = document.getElementById('jump-coins-earned');
@@ -3584,7 +3871,21 @@
 
             Screens.register('intro', null, null);
             Screens.register('main',
-                () => { applyRoom(State.get().activeRoom || 'standard'); applyVanity(); applyFurniture(); Tray.render(); HUD.updateStats(); Parrot.startIdle(); },
+                () => {
+                    applyRoom(State.get().activeRoom || 'standard');
+                    applyVanity(); applyFurniture(); Tray.render();
+                    HUD.updateAll();
+                    Parrot.startIdle();
+                    // Show daily login bonus toast
+                    const { bonus, streak } = State.checkDailyLogin();
+                    if (bonus > 0) {
+                        setTimeout(() => {
+                            FX.floatText(`\uD83C\uDF1F Day ${streak} Streak!`, '#f5c842', 140, 170);
+                            FX.floatText(`+${bonus} Coins`, '#f5c842', 160, 195);
+                            HUD.updateCoins();
+                        }, 800);
+                    }
+                },
                 () => { Parrot.clearIdle(); }
             );
             Screens.register('shop',
@@ -3673,6 +3974,7 @@
                 applyFurniture();
                 Tray.render();
                 HUD.updateStats();
+                HUD.updateBond();
                 Parrot.startIdle();
             });
 
