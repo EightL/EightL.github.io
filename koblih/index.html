@@ -1845,32 +1845,37 @@
 
             let s = defaults();
 
+            function loadFromObj(parsed) {
+                if (!parsed) return;
+                s = { ...defaults(), ...parsed };
+                s.stats = { ...defaults().stats, ...(parsed.stats || {}) };
+                s.inventory = { ...defaults().inventory, ...(parsed.inventory || {}) };
+                s.ownedFurniture = { ...defaults().ownedFurniture, ...(parsed.ownedFurniture || {}) };
+                s.ownedWindows = parsed.ownedWindows || [];
+                s.activeWindow = parsed.activeWindow || null;
+                s.ownedShelves = parsed.ownedShelves || [];
+                s.activeShelf = parsed.activeShelf || null;
+                s.ownedCarpets = parsed.ownedCarpets || [];
+                s.activeCarpet = parsed.activeCarpet || null;
+                // Migrate old single-value fields to arrays
+                if (Array.isArray(parsed.shelfBottles)) {
+                    s.shelfBottles = [parsed.shelfBottles[0] || null, parsed.shelfBottles[1] || null];
+                } else if (parsed.shelfBottle) {
+                    s.shelfBottles = [parsed.shelfBottle, null];
+                }
+                if (Array.isArray(parsed.windowPlants)) {
+                    s.windowPlants = [parsed.windowPlants[0] || null, parsed.windowPlants[1] || null];
+                } else if (parsed.windowPlant) {
+                    s.windowPlants = [parsed.windowPlant, null];
+                }
+                save();
+            }
+
             function load() {
                 try {
                     const raw = localStorage.getItem(KEY);
                     if (raw) {
-                        const parsed = JSON.parse(raw);
-                        s = { ...defaults(), ...parsed };
-                        s.stats = { ...defaults().stats, ...parsed.stats };
-                        s.inventory = { ...defaults().inventory, ...parsed.inventory };
-                        s.ownedFurniture = { ...defaults().ownedFurniture, ...(parsed.ownedFurniture || {}) };
-                        s.ownedWindows = parsed.ownedWindows || [];
-                        s.activeWindow = parsed.activeWindow || null;
-                        s.ownedShelves = parsed.ownedShelves || [];
-                        s.activeShelf = parsed.activeShelf || null;
-                        s.ownedCarpets = parsed.ownedCarpets || [];
-                        s.activeCarpet = parsed.activeCarpet || null;
-                        // Migrate old single-value fields to arrays
-                        if (Array.isArray(parsed.shelfBottles)) {
-                            s.shelfBottles = [parsed.shelfBottles[0] || null, parsed.shelfBottles[1] || null];
-                        } else if (parsed.shelfBottle) {
-                            s.shelfBottles = [parsed.shelfBottle, null];
-                        }
-                        if (Array.isArray(parsed.windowPlants)) {
-                            s.windowPlants = [parsed.windowPlants[0] || null, parsed.windowPlants[1] || null];
-                        } else if (parsed.windowPlant) {
-                            s.windowPlants = [parsed.windowPlant, null];
-                        }
+                        loadFromObj(JSON.parse(raw));
                     }
                 } catch (e) { s = defaults(); }
             }
@@ -2049,7 +2054,7 @@
             }
 
             load();
-            return { get, modStat, addCoins, spendCoins, addItem, useItem, setHighScore, setHighScoreJump, getBond, modBond, checkDailyLogin, ownsRoom, buyRoom, equipRoom, ownsVanity, buyVanity, toggleVanity, getEquippedVanity, getFurnitureLevel, upgradeFurniture, getActiveWindow, ownsWindow, buyWindow, equipWindow, hasAnyWindow, getActiveShelf, ownsShelf, buyShelf, equipShelf, hasAnyShelf, getActiveCarpet, ownsCarpet, buyCarpet, equipCarpet, unequipCarpet, getWindowPlants, setWindowPlant, removeWindowPlant, getShelfBottles, setShelfBottle, removeShelfBottle, reset, save };
+            return { loadFromObj, get, modStat, addCoins, spendCoins, addItem, useItem, setHighScore, setHighScoreJump, getBond, modBond, checkDailyLogin, ownsRoom, buyRoom, equipRoom, ownsVanity, buyVanity, toggleVanity, getEquippedVanity, getFurnitureLevel, upgradeFurniture, getActiveWindow, ownsWindow, buyWindow, equipWindow, hasAnyWindow, getActiveShelf, ownsShelf, buyShelf, equipShelf, hasAnyShelf, getActiveCarpet, ownsCarpet, buyCarpet, equipCarpet, unequipCarpet, getWindowPlants, setWindowPlant, removeWindowPlant, getShelfBottles, setShelfBottle, removeShelfBottle, reset, save };
         })();
 
         // ════════════════════════════════════════════════
@@ -2106,6 +2111,8 @@
                 const email = makeEmail(username);
                 const { data, error } = await client.auth.signInWithPassword({ email, password });
                 if (error) throw error;
+                currentUser = data.user;
+                await fetchProfile();
                 return data;
             }
 
@@ -4611,6 +4618,17 @@
                 try {
                     if (action === 'login') {
                         await Cloud.login(user, pass);
+                        if (Cloud.currentProfile && Cloud.currentProfile.game_save) {
+                            State.loadFromObj(Cloud.currentProfile.game_save);
+                            if (Screens.current() === 'main') {
+                                applyRoom(State.get().activeRoom || 'standard');
+                                applyVanity(); applyFurniture(); Tray.render();
+                                HUD.updateAll();
+                            }
+                            setTimeout(() => {
+                                FX.floatText('Save loaded!', '#50d070', 145, 90);
+                            }, 100);
+                        }
                     } else {
                         await Cloud.signup(user, pass);
                         // Auto-login after successful signup to update the UI
