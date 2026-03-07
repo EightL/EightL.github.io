@@ -270,6 +270,23 @@
             transform: rotate(60deg);
         }
 
+        #save-btn {
+            background: #173a2a;
+            border: 2px solid #2d7a54;
+            color: #8cf0b8;
+            cursor: pointer;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            line-height: 1;
+            padding: 5px 7px;
+            transition: background 0.15s, transform 0.15s;
+        }
+
+        #save-btn:hover {
+            background: #1f4a35;
+            transform: translateY(-1px);
+        }
+
         /* Bond bar in HUD */
         #bond-bar {
             display: flex;
@@ -1257,8 +1274,9 @@
                 font-size: 12px;
             }
 
-            #settings-btn {
-                font-size: 18px;
+            #save-btn {
+                font-size: 8px;
+                padding: 7px 8px;
             }
 
             #hud-bottom {
@@ -1525,7 +1543,10 @@
                         </div>
                         <span id="bond-pct">0</span>
                     </div>
-                    <button id="settings-btn" title="Settings">&#x2699;&#xFE0F;</button>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <button id="save-btn" title="Save to Cloud">SAVE</button>
+                        <button id="settings-btn" title="Settings">&#x2699;&#xFE0F;</button>
+                    </div>
                 </div>
             </div>
 
@@ -1547,9 +1568,6 @@
                         </div>
                         <div style="display:flex;flex-direction:column;gap:12px;width:100%;">
                             <button class="settings-btn" id="toggle-auth-btn">🔑 Log In / Sign Up</button>
-                            <button class="settings-btn" id="force-sync-btn"
-                                style="display:none; border-color: #38a058; color: #50d070;">☁️ Force Sync Cloud
-                                Save</button>
                             <button class="settings-btn danger" id="reset-btn">&#x26A0; Reset Progress</button>
                             <button class="settings-btn" id="settings-close-btn">Close</button>
                         </div>
@@ -1860,7 +1878,6 @@
             function save() {
                 s.savedAt = Date.now();
                 try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) { }
-                if (window.Cloud) Cloud.scheduleSync();
             }
 
             function get() { return s; }
@@ -2046,21 +2063,18 @@
 
             let currentUser = null;
             let currentProfile = null;
-            let syncTimer = null;
 
             async function init() {
                 const { data: { session } } = await client.auth.getSession();
                 if (session) {
                     currentUser = session.user;
                     await fetchProfile();
-                    syncFromCloud();
                 }
 
                 client.auth.onAuthStateChange(async (event, session) => {
                     currentUser = session?.user || null;
                     if (currentUser) {
                         await fetchProfile();
-                        syncFromCloud();
                     } else {
                         currentProfile = null;
                     }
@@ -2120,81 +2134,42 @@
                 await client.auth.signOut();
             }
 
-            function scheduleSync() {
-                if (!currentUser) return;
-                if (syncTimer) clearTimeout(syncTimer);
-                syncTimer = setTimeout(() => {
-                    forceSyncToCloud();
-                }, 5000); // debounce 5s
-            }
-
             async function forceSyncToCloud() {
-                if (!currentUser) return;
+                if (!currentUser) throw new Error('Log in first');
                 const localState = State.get();
-                await client.from('profiles').update({
-                    game_save: localState,
-                    updated_at: new Date().toISOString()
-                }).eq('id', currentUser.id);
-            }
-
-            function syncFromCloud() {
-                if (!currentProfile || !currentProfile.game_save) return;
-
-                const cloudSave = currentProfile.game_save;
-                const localSave = State.get();
-
-                // Compare savedAt to pick the newer one
-                const cTime = cloudSave.savedAt || 0;
-                const lTime = localSave.savedAt || 0;
-
-                if (cTime > lTime) {
-                    // Cloud save is newer, merge it into State and force a save to localStorage
-                    Object.assign(localSave, cloudSave);
-                    State.save(); // this triggers a scheduleSync but it's identical so it's fine
-                    // We must also trigger visual updates safely
-                    try {
-                        if (typeof HUD !== 'undefined') {
-                            HUD.updateStats();
-                            HUD.updateCoins();
-                            HUD.updateBond();
-                        }
-                        if (typeof Tray !== 'undefined') Tray.render();
-                        if (typeof applyRoom !== 'undefined') applyRoom(localSave.activeRoom || 'standard');
-                        if (typeof applyVanity !== 'undefined') applyVanity();
-                        if (typeof applyFurniture !== 'undefined') applyFurniture();
-                    } catch (e) {
-                        console.error("UI Update Error after sync", e);
-                    }
-                } else if (lTime > cTime) {
-                    // Local save is newer, push to cloud immediately
-                    forceSyncToCloud();
+                const snapshot = JSON.parse(JSON.stringify(localState));
+                console.log('Attempting cloud save for user:', currentUser.id);
+                const { data, error } = await client
+                    .from('profiles')
+                    .upsert({
+                        id: currentUser.id,
+                        username: currentProfile?.username,
+                        game_save: snapshot,
+                        updated_at: new Date().toISOString()
+                    })
+                    .select();
+                if (error) {
+                    console.error('Cloud save error:', error);
+                    throw error;
                 }
+                console.log('Cloud save successful');
+                if (currentProfile) currentProfile.game_save = snapshot;
             }
 
-            async function forceSyncFromCloud() {
-                if (typeof Audio !== 'undefined' && Audio.sfx) Audio.sfx.click();
-                if (!currentUser) return;
-                await fetchProfile();
-                if (currentProfile && currentProfile.game_save) {
-                    const cTime = currentProfile.game_save.savedAt || 0;
-                    const lTime = State.get().savedAt || 0;
-                    currentProfile.game_save.savedAt = Math.max(cTime, lTime + 1);
-                    syncFromCloud();
-                    if (typeof FX !== 'undefined') FX.floatText('Cloud Save Synced!', '#50d070', 115, 150);
-                }
-            }
-
-            async function submitScore(game, score, currentHighScore) {
+            async function submitScore(game, score) {
                 if (!currentUser || !currentProfile) return;
-                // Only submit if it's better than logic inside State already handled, but State logic is locally driven.
-                // We'll trust the local State.highScore for this specific game.
+                // Only submit to leaderboard if this score beats the current high score
+                const highScore = game === 'flappy' ? State.get().highScore : State.get().highScoreJump;
+                if (score < (highScore || 0)) return; // Don't submit if it's not a new personal best
 
+                console.log(`Submitting ${game} score to leaderboard:`, score);
                 const { error } = await client.from('leaderboard').upsert({
                     user_id: currentUser.id,
                     username: currentProfile.username,
                     game: game,
                     score: score
                 }, { onConflict: 'user_id, game' });
+                if (error) console.error('Leaderboard submission error:', error);
             }
 
             async function getLeaderboard(game) {
@@ -2207,8 +2182,7 @@
                 if (error) return [];
                 return data;
             }
-            init();
-            return { login, signup, logout, syncToCloud: forceSyncToCloud, syncFromCloud, forceSyncFromCloud, submitScore, getLeaderboard, get currentUser() { return currentUser; }, get currentProfile() { return currentProfile; } };
+            return { init, login, signup, logout, syncToCloud: forceSyncToCloud, submitScore, getLeaderboard, get currentUser() { return currentUser; }, get currentProfile() { return currentProfile; } };
         })();
 
         // Expose to window for State.save access if needed
@@ -3687,10 +3661,16 @@
             }
 
             function stop() {
-                if (running && !dead && coinsEarned > 0) {
-                    State.addCoins(coinsEarned);
-                    HUD.updateCoins();
-                    coinsEarned = 0;
+                if (running && !dead) {
+                    if (coinsEarned > 0) {
+                        State.addCoins(coinsEarned);
+                        HUD.updateCoins();
+                        coinsEarned = 0;
+                    }
+                    if (score > 0) {
+                        State.setHighScore(score);
+                        if (window.Cloud) Cloud.submitScore('flappy', score);
+                    }
                 }
                 running = false;
                 if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
@@ -4075,10 +4055,16 @@
             }
 
             function stop() {
-                if (running && !dead && coinsEarned > 0) {
-                    State.addCoins(coinsEarned);
-                    HUD.updateCoins();
-                    coinsEarned = 0;
+                if (running && !dead) {
+                    if (coinsEarned > 0) {
+                        State.addCoins(coinsEarned);
+                        HUD.updateCoins();
+                        coinsEarned = 0;
+                    }
+                    if (score > 0) {
+                        State.setHighScoreJump(score);
+                        if (window.Cloud) Cloud.submitScore('jump', score);
+                    }
                 }
                 running = false;
                 if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
@@ -4562,20 +4548,17 @@
             window.updateAuthUI = function () {
                 const statusEl = document.getElementById('auth-status');
                 const toggleBtn = document.getElementById('toggle-auth-btn');
-                const syncBtn = document.getElementById('force-sync-btn');
                 const formEl = document.getElementById('auth-form');
 
                 if (Cloud.currentUser && Cloud.currentProfile) {
-                    statusEl.innerHTML = `Logged in as <b>${Cloud.currentProfile.username}</b>. Cloud save active.`;
+                    statusEl.innerHTML = `Logged in as <b>${Cloud.currentProfile.username}</b>.<br>Progress stays local until you press SAVE.`;
                     statusEl.className = 'auth-status logged-in';
                     toggleBtn.textContent = 'Log Out';
-                    syncBtn.style.display = 'block';
                     formEl.style.display = 'none';
                 } else {
-                    statusEl.innerHTML = `Not logged in yet.<br>Progress isn't saved across devices.`;
+                    statusEl.innerHTML = `Not logged in yet.<br>Progress is stored only in this browser.`;
                     statusEl.className = 'auth-status';
                     toggleBtn.textContent = '🔑 Log In / Sign Up';
-                    syncBtn.style.display = 'none';
                 }
             };
 
@@ -4589,9 +4572,29 @@
                 }
             });
 
-            document.getElementById('force-sync-btn').addEventListener('click', async () => {
-                await Cloud.forceSyncFromCloud();
-                closeSettings();
+            document.getElementById('save-btn').addEventListener('click', async () => {
+                Audio.sfx.click();
+                console.log('Save button clicked, Cloud:', !!window.Cloud, 'User:', Cloud?.currentUser?.id);
+                if (!window.Cloud) {
+                    console.error('Cloud module not available');
+                    FX.floatText('Cloud unavailable', '#f08a80', 150, 90);
+                    return;
+                }
+                if (!Cloud.currentUser) {
+                    console.log('No user logged in');
+                    FX.floatText('Log in to save', '#f08a80', 150, 90);
+                    openSettings();
+                    return;
+                }
+                try {
+                    console.log('Starting cloud save...');
+                    await Cloud.syncToCloud();
+                    console.log('Cloud save completed');
+                    FX.floatText('Saved to cloud!', '#50d070', 145, 90);
+                } catch (error) {
+                    console.error('Cloud save failed:', error);
+                    FX.floatText('Save failed', '#f08a80', 155, 90);
+                }
             });
 
             async function handleAuthAction(action) {
