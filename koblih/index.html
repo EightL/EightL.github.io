@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Koblih Game</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -653,12 +654,45 @@
 
         /* ===== HUD BOTTOM ===== */
         #hud-bottom {
-            height: 158px;
+            height: 180px;
             background: #150c04;
             border-top: 3px solid #3d2010;
             display: flex;
             flex-direction: column;
             flex-shrink: 0;
+        }
+
+        #tray-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .tray-btn {
+            background: #261508;
+            border: 2px solid #5a3418;
+            color: #f5c842;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 10px;
+            width: 28px;
+            height: 58px;
+            cursor: pointer;
+            margin: 8px 4px 4px;
+            flex-shrink: 0;
+            display: none;
+            /* JS will toggle */
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s, background 0.1s;
+        }
+
+        .tray-btn:hover {
+            background: #361e0a;
+            box-shadow: 0 0 8px rgba(245, 200, 66, 0.3);
+        }
+
+        .tray-btn:active {
+            transform: translateY(1px);
         }
 
         #item-tray {
@@ -669,11 +703,16 @@
             padding: 8px 10px 4px;
             overflow-x: auto;
             overflow-y: hidden;
-            scrollbar-width: thin;
-            scrollbar-color: #3d2010 transparent;
+            scrollbar-width: none;
+            /* Hide native scrollbar */
+            -ms-overflow-style: none;
+            /* IE and Edge */
             -webkit-overflow-scrolling: touch;
-            /* Prevent back/forward navigation on mobile when swiping tray */
             overscroll-behavior-x: none;
+        }
+
+        #item-tray::-webkit-scrollbar {
+            display: none;
         }
 
         .item-card {
@@ -690,7 +729,9 @@
             align-items: center;
             justify-content: center;
             transition: border-color 0.12s, box-shadow 0.12s, transform 0.1s;
-            touch-action: pan-x;
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         .item-card:hover:not(.depleted) {
@@ -731,12 +772,15 @@
         #nav-buttons {
             display: flex;
             gap: 8px;
-            padding: 5px 10px 10px;
+            padding: 10px 10px 15px;
+            /* Increased bottom padding */
+            flex: 1;
         }
 
         .nav-btn {
             flex: 1;
-            padding: 12px 6px;
+            padding: 16px 6px;
+            /* increased vertical padding to make them taller */
             background: #261508;
             border: 2px solid #5a3418;
             color: #f5c842;
@@ -1127,6 +1171,20 @@
             background: #4a204a;
         }
 
+        .btn-leaderboard-header {
+            background: #2a1610;
+            border: 2px solid #7a4020;
+            color: #f5c842;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 7px;
+            padding: 5px 8px;
+            cursor: pointer;
+        }
+
+        .btn-leaderboard-header:hover {
+            background: #3a2010;
+        }
+
         #jump-canvas {
             display: block;
             flex: 1;
@@ -1194,7 +1252,7 @@
             }
 
             #hud-bottom {
-                height: 180px;
+                height: 200px;
             }
 
             .item-card {
@@ -1249,10 +1307,148 @@
 
             /* Minigame back buttons */
             #flappy-back-btn,
-            #jump-back-btn {
+            #jump-back-btn,
+            .btn-leaderboard-header {
                 font-size: 9px;
                 padding: 8px 12px;
             }
+        }
+
+        /* Auth & Leaderboard CSS */
+        .auth-status {
+            font-size: 8px;
+            color: #d06050;
+            text-align: center;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .auth-status.logged-in {
+            color: #50d070;
+        }
+
+        #auth-form {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+            background: #180810;
+            padding: 12px;
+            border: 2px solid #5a1830;
+        }
+
+        #auth-form input {
+            background: #000;
+            border: 2px solid #5a3214;
+            color: #fff;
+            padding: 8px;
+            font-family: inherit;
+            font-size: 10px;
+        }
+
+        #auth-form input:focus {
+            outline: none;
+            border-color: #f5c842;
+        }
+
+        .auth-btn-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        #leaderboard-modal {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 300;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #leaderboard-modal.open {
+            display: flex;
+        }
+
+        #leaderboard-box {
+            background: #2a1610;
+            border: 4px solid #7a4020;
+            border-radius: 8px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+        }
+
+        .lb-tabs {
+            display: flex;
+            gap: 4px;
+        }
+
+        .lb-tab {
+            flex: 1;
+            padding: 10px;
+            background: #1a0808;
+            border: 2px solid #502828;
+            color: #888;
+            font-family: inherit;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .lb-tab.active {
+            background: #381838;
+            border-color: #904090;
+            color: #f090d0;
+        }
+
+        .lb-table-container {
+            overflow-y: auto;
+            flex: 1;
+            min-height: 150px;
+            background: #110808;
+            border: 2px solid #4a2010;
+            padding: 8px;
+        }
+
+        .lb-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 4px;
+            border-bottom: 2px solid #2a1010;
+            font-size: 9px;
+        }
+
+        .lb-row.header {
+            color: #f5c842;
+            border-bottom-color: #5a3214;
+        }
+
+        .lb-row:last-child {
+            border-bottom: none;
+        }
+
+        .lb-rank {
+            width: 30px;
+            color: #aaa;
+        }
+
+        .lb-name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .lb-score {
+            width: 50px;
+            text-align: right;
+            color: #f5c842;
         }
     </style>
 </head>
@@ -1328,7 +1524,19 @@
                 <div id="settings-box">
                     <div id="settings-title">SETTINGS</div>
                     <div id="settings-main">
+                        <div id="auth-status" class="auth-status">Not logged in yet.<br>Progress isn't saved across
+                            devices.</div>
+                        <div id="auth-form">
+                            <input type="text" id="auth-username" placeholder="Username" maxlength="20">
+                            <input type="password" id="auth-password" placeholder="Password">
+                            <div class="auth-btn-row">
+                                <button class="settings-btn" id="auth-login-btn" style="flex:1;">Log In</button>
+                                <button class="settings-btn" id="auth-signup-btn" style="flex:1;">Sign Up</button>
+                            </div>
+                            <div id="auth-error" style="color:#d06050;font-size:8px;text-align:center;"></div>
+                        </div>
                         <div style="display:flex;flex-direction:column;gap:12px;width:100%;">
+                            <button class="settings-btn" id="toggle-auth-btn">🔑 Log In / Sign Up</button>
                             <button class="settings-btn danger" id="reset-btn">&#x26A0; Reset Progress</button>
                             <button class="settings-btn" id="settings-close-btn">Close</button>
                         </div>
@@ -1367,7 +1575,11 @@
             </div>
 
             <div id="hud-bottom">
-                <div id="item-tray"></div>
+                <div id="tray-container">
+                    <button class="tray-btn" id="tray-btn-left">&lt;</button>
+                    <div id="item-tray"></div>
+                    <button class="tray-btn" id="tray-btn-right">&gt;</button>
+                </div>
                 <div id="nav-buttons">
                     <button class="nav-btn" id="btn-shop"><img class="nav-btn-icon" src="images/shop.png" alt="">
                         SHOP</button>
@@ -1400,7 +1612,10 @@
             <div id="flappy-header">
                 <button id="flappy-back-btn">&#x2190; BACK</button>
                 <div id="flappy-title-text">FLAPPY KOBLIH</div>
-                <div id="flappy-score-display">&#x1FA99; <span id="flappy-coins-earned">0</span></div>
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <span id="flappy-coins-earned" style="font-size:9px;color:#f5c842;">0</span>
+                    <button class="btn-leaderboard btn-leaderboard-header" data-game="flappy">🏆 LDB</button>
+                </div>
             </div>
             <canvas id="flappy-canvas" width="480" height="664"></canvas>
         </div>
@@ -1410,9 +1625,27 @@
             <div id="jump-header">
                 <button id="jump-back-btn">&#x2190; BACK</button>
                 <div id="jump-title-text">KOBLIH JUMP</div>
-                <div id="jump-score-display">&#x1FA99; <span id="jump-coins-earned">0</span></div>
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <span id="jump-coins-earned" style="font-size:9px;color:#f5c842;">0</span>
+                    <button class="btn-leaderboard btn-leaderboard-header" data-game="jump">🏆 LDB</button>
+                </div>
             </div>
             <canvas id="jump-canvas" width="480" height="664"></canvas>
+        </div>
+
+        <!-- ===== LEADERBOARD MODAL ===== -->
+        <div id="leaderboard-modal">
+            <div id="leaderboard-box">
+                <div style="text-align:center;font-size:14px;color:#f5c842;margin-bottom:8px;">LEADERBOARD</div>
+                <div class="lb-tabs">
+                    <button class="lb-tab active" data-game="flappy">FLAPPY</button>
+                    <button class="lb-tab" data-game="jump">JUMP</button>
+                </div>
+                <div class="lb-table-container">
+                    <div id="lb-content">Loading...</div>
+                </div>
+                <button class="settings-btn" id="lb-close-btn" style="margin-top:8px;">Close</button>
+            </div>
         </div>
 
     </div>
@@ -1611,7 +1844,11 @@
                 } catch (e) { s = defaults(); }
             }
 
-            function save() { s.savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) { } }
+            function save() {
+                s.savedAt = Date.now();
+                try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) { }
+                if (window.Cloud) Cloud.scheduleSync();
+            }
 
             function get() { return s; }
 
@@ -1784,6 +2021,165 @@
             load();
             return { get, modStat, addCoins, spendCoins, addItem, useItem, setHighScore, setHighScoreJump, getBond, modBond, checkDailyLogin, ownsRoom, buyRoom, equipRoom, ownsVanity, buyVanity, toggleVanity, getEquippedVanity, getFurnitureLevel, upgradeFurniture, getActiveWindow, ownsWindow, buyWindow, equipWindow, hasAnyWindow, getActiveShelf, ownsShelf, buyShelf, equipShelf, hasAnyShelf, getActiveCarpet, ownsCarpet, buyCarpet, equipCarpet, unequipCarpet, getWindowPlants, setWindowPlant, removeWindowPlant, getShelfBottles, setShelfBottle, removeShelfBottle, reset, save };
         })();
+
+        // ════════════════════════════════════════════════
+        // CLOUD SYNC & AUTH
+        // ════════════════════════════════════════════════
+
+        const Cloud = (() => {
+            const SUPABASE_URL = 'https://swipksmzouekmgpeowbq.supabase.co';
+            const SUPABASE_KEY = 'sb_publishable_Ssmfdx1-vHRy7QHYH2mhew_jMtaFivl';
+            const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+            let currentUser = null;
+            let currentProfile = null;
+            let syncTimer = null;
+
+            async function init() {
+                const { data: { session } } = await client.auth.getSession();
+                if (session) {
+                    currentUser = session.user;
+                    await fetchProfile();
+                    syncFromCloud();
+                }
+
+                client.auth.onAuthStateChange(async (event, session) => {
+                    currentUser = session?.user || null;
+                    if (currentUser) {
+                        await fetchProfile();
+                        syncFromCloud();
+                    } else {
+                        currentProfile = null;
+                    }
+                    updateAuthUI();
+                });
+
+                updateAuthUI();
+            }
+
+            async function fetchProfile() {
+                if (!currentUser) return;
+                const { data, error } = await client
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', currentUser.id)
+                    .single();
+
+                if (data && !error) {
+                    currentProfile = data;
+                }
+            }
+
+            // Pseudo-email generation to hide email requirement
+            function makeEmail(username) {
+                return username.toLowerCase().replace(/[^a-z0-9]/g, '') + '@gmail.com';
+            }
+
+            async function login(username, password) {
+                const email = makeEmail(username);
+                const { data, error } = await client.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                return data;
+            }
+
+            async function signup(username, password) {
+                if (!username || username.length < 3) throw new Error("Username too short");
+                const email = makeEmail(username);
+                const { data, error } = await client.auth.signUp({
+                    email,
+                    password,
+                    options: { data: { username: username } }
+                });
+                if (error) throw error;
+
+                // Ensure profile is created
+                if (data.user) {
+                    await client.from('profiles').upsert({
+                        id: data.user.id,
+                        username: username,
+                        game_save: State.get()
+                    });
+                }
+                return data;
+            }
+
+            async function logout() {
+                await client.auth.signOut();
+            }
+
+            function scheduleSync() {
+                if (!currentUser) return;
+                if (syncTimer) clearTimeout(syncTimer);
+                syncTimer = setTimeout(() => {
+                    forceSyncToCloud();
+                }, 5000); // debounce 5s
+            }
+
+            async function forceSyncToCloud() {
+                if (!currentUser) return;
+                const localState = State.get();
+                await client.from('profiles').update({
+                    game_save: localState,
+                    updated_at: new Date().toISOString()
+                }).eq('id', currentUser.id);
+            }
+
+            function syncFromCloud() {
+                if (!currentProfile || !currentProfile.game_save) return;
+
+                const cloudSave = currentProfile.game_save;
+                const localSave = State.get();
+
+                // Compare savedAt to pick the newer one
+                const cTime = cloudSave.savedAt || 0;
+                const lTime = localSave.savedAt || 0;
+
+                if (cTime > lTime) {
+                    // Cloud save is newer, merge it into State and force a save to localStorage
+                    Object.assign(localSave, cloudSave);
+                    State.save(); // this triggers a scheduleSync but it's identical so it's fine
+                    // We must also trigger visual updates safely
+                    if (window.HUD) {
+                        window.HUD.updateStats();
+                        window.HUD.updateCoins();
+                        window.HUD.updateBond();
+                        window.Tray.render();
+                    }
+                } else if (lTime > cTime) {
+                    // Local save is newer, push to cloud immediately
+                    forceSyncToCloud();
+                }
+            }
+
+            async function submitScore(game, score, currentHighScore) {
+                if (!currentUser || !currentProfile) return;
+                // Only submit if it's better than logic inside State already handled, but State logic is locally driven.
+                // We'll trust the local State.highScore for this specific game.
+
+                const { error } = await client.from('leaderboard').upsert({
+                    user_id: currentUser.id,
+                    username: currentProfile.username,
+                    game: game,
+                    score: score
+                }, { onConflict: 'user_id, game' });
+            }
+
+            async function getLeaderboard(game) {
+                const { data, error } = await client
+                    .from('leaderboard')
+                    .select('username, score')
+                    .eq('game', game)
+                    .order('score', { ascending: false })
+                    .limit(20);
+                if (error) return [];
+                return data;
+            }
+
+            return { init, login, signup, logout, scheduleSync, submitScore, getLeaderboard, get currentUser() { return currentUser; }, get currentProfile() { return currentProfile; } };
+        })();
+
+        // Expose to window for State.save access if needed
+        window.Cloud = Cloud;
 
         // ════════════════════════════════════════════════
         // AUDIO
@@ -2148,12 +2544,50 @@
                     card.appendChild(badge);
 
                     if (!depleted) {
-                        card.addEventListener('pointerdown', e => { e.preventDefault(); Drag.start(e, key); });
+                        card.addEventListener('pointerdown', e => {
+                            e.preventDefault();
+                            Drag.start(e, key);
+                        });
+                        card.addEventListener('touchstart', e => {
+                            e.preventDefault(); // Prevents the tray from stealing the scroll right away
+                        }, { passive: false });
                     }
 
                     tray.appendChild(card);
                 }
+
+                // Allow DOM to update before checking scroll width
+                requestAnimationFrame(updateTrayButtons);
             }
+
+            // Scroll button logic
+            const trayBtnLeft = document.getElementById('tray-btn-left');
+            const trayBtnRight = document.getElementById('tray-btn-right');
+            const itemTray = document.getElementById('item-tray');
+
+            function updateTrayButtons() {
+                const needsScroll = itemTray.scrollWidth > itemTray.clientWidth + 2; // +2 for fractional pixels
+                trayBtnLeft.style.display = needsScroll ? 'flex' : 'none';
+                trayBtnRight.style.display = needsScroll ? 'flex' : 'none';
+
+                if (needsScroll) {
+                    trayBtnLeft.style.opacity = itemTray.scrollLeft > 5 ? '1' : '0.3';
+                    trayBtnRight.style.opacity = (itemTray.scrollLeft + itemTray.clientWidth < itemTray.scrollWidth - 5) ? '1' : '0.3';
+                }
+            }
+
+            trayBtnLeft.addEventListener('click', () => {
+                Audio.sfx.click();
+                itemTray.scrollBy({ left: -140, behavior: 'smooth' });
+            });
+            trayBtnRight.addEventListener('click', () => {
+                Audio.sfx.click();
+                itemTray.scrollBy({ left: 140, behavior: 'smooth' });
+            });
+
+            itemTray.addEventListener('scroll', updateTrayButtons);
+            window.addEventListener('resize', () => requestAnimationFrame(updateTrayButtons));
+
             return { render };
         })();
 
@@ -2334,6 +2768,7 @@
                 if (zone !== petZone) {
                     petZone = zone;
                     Audio.sfx.pet();
+                    if (navigator.vibrate) navigator.vibrate(15);
                     if (zone === 'top') {
                         Parrot.lock('pet_head', 0);
                         Parrot.showHand('images/hand_pet.png', lx, ly);
@@ -2510,6 +2945,7 @@
                 applyBond(1);
 
                 Parrot.bounce();
+                if (navigator.vibrate) navigator.vibrate([20, 30, 20]);
                 HUD.updateStats();
                 Tray.render();
             }
@@ -2518,6 +2954,7 @@
                 const delta = zone === 'top' ? 15 : zone === 'mid' ? 12 : 8;
                 State.modStat('happy', delta);
                 Audio.sfx.chirp();
+                if (navigator.vibrate) navigator.vibrate(30);
                 FX.burst('💛', 190, 240, 5);
                 FX.floatText('💛 Happy!', '#e04080', 140, 250);
 
@@ -2550,6 +2987,7 @@
                 applyBond(1);
 
                 Parrot.bounce();
+                if (navigator.vibrate) navigator.vibrate([30, 40, 30]);
                 setTimeout(() => Parrot.unlock(), 2600);
                 HUD.updateStats();
                 Tray.render();
@@ -3281,6 +3719,7 @@
                 coinsEarned = total;
                 State.addCoins(total);
                 State.setHighScore(score);
+                if (window.Cloud) Cloud.submitScore('flappy', score);
                 State.modBond(Math.min(5, Math.floor(score / 5) + 1)); // bond grows from playing
                 HUD.updateCoins();
                 HUD.updateBond();
@@ -3694,6 +4133,7 @@
                 const total = coinsEarned + endBonus;
                 State.addCoins(total);
                 State.setHighScoreJump(score);
+                if (window.Cloud) Cloud.submitScore('jump', score);
                 State.modBond(Math.min(5, Math.floor(score / 10) + 1)); // bond grows from altitude
                 HUD.updateCoins();
                 HUD.updateBond();
@@ -4024,10 +4464,125 @@
                 confirmBox.classList.remove('open');
                 settingsMain.style.display = '';
                 settingsModal.classList.add('open');
+                document.getElementById('auth-form').style.display = 'none';
             }
             function closeSettings() {
                 settingsModal.classList.remove('open');
             }
+
+            // Auth UI Logic
+            window.updateAuthUI = function () {
+                const statusEl = document.getElementById('auth-status');
+                const toggleBtn = document.getElementById('toggle-auth-btn');
+                const formEl = document.getElementById('auth-form');
+
+                if (Cloud.currentUser && Cloud.currentProfile) {
+                    statusEl.innerHTML = `Logged in as <b>${Cloud.currentProfile.username}</b>. Cloud save active.`;
+                    statusEl.className = 'auth-status logged-in';
+                    toggleBtn.textContent = 'Log Out';
+                    formEl.style.display = 'none';
+                } else {
+                    statusEl.innerHTML = `Not logged in yet.<br>Progress isn't saved across devices.`;
+                    statusEl.className = 'auth-status';
+                    toggleBtn.textContent = '🔑 Log In / Sign Up';
+                }
+            };
+
+            document.getElementById('toggle-auth-btn').addEventListener('click', async () => {
+                Audio.sfx.click();
+                if (Cloud.currentUser) {
+                    await Cloud.logout();
+                } else {
+                    const formEl = document.getElementById('auth-form');
+                    formEl.style.display = formEl.style.display === 'flex' ? 'none' : 'flex';
+                }
+            });
+
+            async function handleAuthAction(action) {
+                Audio.sfx.click();
+                const user = document.getElementById('auth-username').value.trim();
+                const pass = document.getElementById('auth-password').value;
+                const errEl = document.getElementById('auth-error');
+                errEl.style.color = '#f5c842';
+                errEl.textContent = 'Loading... please wait';
+
+                if (!user || user.length < 3) { errEl.style.color = '#d06050'; errEl.textContent = 'Username must be >= 3 chars'; return; }
+                if (!pass || pass.length < 6) { errEl.style.color = '#d06050'; errEl.textContent = 'Password must be >= 6 chars'; return; }
+
+                try {
+                    if (action === 'login') {
+                        await Cloud.login(user, pass);
+                    } else {
+                        await Cloud.signup(user, pass);
+                        // Auto-login after successful signup to update the UI
+                        await Cloud.login(user, pass);
+                    }
+                    errEl.textContent = ''; // clear loading on success
+                } catch (e) {
+                    errEl.style.color = '#d06050';
+                    errEl.textContent = e.message || 'Authentication error';
+                }
+            }
+
+            document.getElementById('auth-login-btn').addEventListener('click', () => handleAuthAction('login'));
+            document.getElementById('auth-signup-btn').addEventListener('click', () => handleAuthAction('signup'));
+
+            // Leaderboard UI Logic
+            const lbModal = document.getElementById('leaderboard-modal');
+            const lbContent = document.getElementById('lb-content');
+            const lbTabs = document.querySelectorAll('.lb-tab');
+            let currentLbGame = 'flappy';
+
+            async function openLeaderboard(game) {
+                Audio.sfx.click();
+                lbModal.classList.add('open');
+                currentLbGame = game;
+                updateLbTabs();
+                await loadLeaderboard();
+            }
+
+            function updateLbTabs() {
+                lbTabs.forEach(t => {
+                    t.classList.toggle('active', t.dataset.game === currentLbGame);
+                });
+            }
+
+            async function loadLeaderboard() {
+                lbContent.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">Loading...</div>';
+                const data = await Cloud.getLeaderboard(currentLbGame);
+                if (!data || data.length === 0) {
+                    lbContent.innerHTML = '<div style="text-align:center;padding:20px;color:#888;">No scores yet!</div>';
+                    return;
+                }
+
+                let html = `<div class="lb-row header"><div class="lb-rank">#</div><div class="lb-name">Player</div><div class="lb-score">Score</div></div>`;
+                data.forEach((row, idx) => {
+                    const isMe = Cloud.currentProfile && Cloud.currentProfile.username === row.username;
+                    const nameColor = isMe ? '#50d070' : '#fff';
+                    html += `<div class="lb-row">
+                        <div class="lb-rank">${idx + 1}</div>
+                        <div class="lb-name" style="color:${nameColor};">${row.username}</div>
+                        <div class="lb-score">${row.score}</div>
+                    </div>`;
+                });
+                lbContent.innerHTML = html;
+            }
+
+            document.querySelectorAll('.btn-leaderboard').forEach(btn => {
+                btn.addEventListener('click', () => openLeaderboard(btn.dataset.game));
+            });
+            lbTabs.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    Audio.sfx.click();
+                    currentLbGame = btn.dataset.game;
+                    updateLbTabs();
+                    loadLeaderboard();
+                });
+            });
+            document.getElementById('lb-close-btn').addEventListener('click', () => {
+                Audio.sfx.click();
+                lbModal.classList.remove('open');
+            });
 
             document.getElementById('settings-btn').addEventListener('click', openSettings);
             document.getElementById('settings-close-btn').addEventListener('click', () => { Audio.sfx.click(); closeSettings(); });
@@ -4057,7 +4612,9 @@
 
             // Close modal on backdrop click
             settingsModal.addEventListener('click', e => { if (e.target === settingsModal) closeSettings(); });
+            lbModal.addEventListener('click', e => { if (e.target === lbModal) lbModal.classList.remove('open'); });
 
+            if (window.Cloud) Cloud.init();
             startDecayLoop();
             initIntroStars();
             Screens.go('intro');
