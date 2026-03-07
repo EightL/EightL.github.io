@@ -1537,6 +1537,9 @@
                         </div>
                         <div style="display:flex;flex-direction:column;gap:12px;width:100%;">
                             <button class="settings-btn" id="toggle-auth-btn">🔑 Log In / Sign Up</button>
+                            <button class="settings-btn" id="force-sync-btn"
+                                style="display:none; border-color: #38a058; color: #50d070;">☁️ Force Sync Cloud
+                                Save</button>
                             <button class="settings-btn danger" id="reset-btn">&#x26A0; Reset Progress</button>
                             <button class="settings-btn" id="settings-close-btn">Close</button>
                         </div>
@@ -2139,15 +2142,35 @@
                     Object.assign(localSave, cloudSave);
                     State.save(); // this triggers a scheduleSync but it's identical so it's fine
                     // We must also trigger visual updates safely
-                    if (window.HUD) {
-                        window.HUD.updateStats();
-                        window.HUD.updateCoins();
-                        window.HUD.updateBond();
-                        window.Tray.render();
+                    try {
+                        if (typeof HUD !== 'undefined') {
+                            HUD.updateStats();
+                            HUD.updateCoins();
+                            HUD.updateBond();
+                        }
+                        if (typeof Tray !== 'undefined') Tray.render();
+                        if (typeof applyRoom !== 'undefined') applyRoom(localSave.activeRoom || 'standard');
+                        if (typeof applyVanity !== 'undefined') applyVanity();
+                        if (typeof applyFurniture !== 'undefined') applyFurniture();
+                    } catch (e) {
+                        console.error("UI Update Error after sync", e);
                     }
                 } else if (lTime > cTime) {
                     // Local save is newer, push to cloud immediately
                     forceSyncToCloud();
+                }
+            }
+
+            async function forceSyncFromCloud() {
+                if (typeof Audio !== 'undefined' && Audio.sfx) Audio.sfx.click();
+                if (!currentUser) return;
+                await fetchProfile();
+                if (currentProfile && currentProfile.game_save) {
+                    const cTime = currentProfile.game_save.savedAt || 0;
+                    const lTime = State.get().savedAt || 0;
+                    currentProfile.game_save.savedAt = Math.max(cTime, lTime + 1);
+                    syncFromCloud();
+                    if (typeof FX !== 'undefined') FX.floatText('Cloud Save Synced!', '#50d070', 115, 150);
                 }
             }
 
@@ -2174,8 +2197,8 @@
                 if (error) return [];
                 return data;
             }
-
-            return { init, login, signup, logout, scheduleSync, submitScore, getLeaderboard, get currentUser() { return currentUser; }, get currentProfile() { return currentProfile; } };
+            init();
+            return { login, signup, logout, syncToCloud: forceSyncToCloud, syncFromCloud, forceSyncFromCloud, fetchProfile, submitScore, getLeaderboard, get currentUser() { return currentUser; }, get currentProfile() { return currentProfile; } };
         })();
 
         // Expose to window for State.save access if needed
@@ -2577,10 +2600,13 @@
             }
 
             trayBtnLeft.addEventListener('click', () => {
+                if (itemTray.scrollLeft <= 2) return;
                 Audio.sfx.click();
                 itemTray.scrollBy({ left: -140, behavior: 'smooth' });
             });
             trayBtnRight.addEventListener('click', () => {
+                const maxScrollLeft = itemTray.scrollWidth - itemTray.clientWidth;
+                if (itemTray.scrollLeft >= maxScrollLeft - 2) return;
                 Audio.sfx.click();
                 itemTray.scrollBy({ left: 140, behavior: 'smooth' });
             });
@@ -4474,17 +4500,20 @@
             window.updateAuthUI = function () {
                 const statusEl = document.getElementById('auth-status');
                 const toggleBtn = document.getElementById('toggle-auth-btn');
+                const syncBtn = document.getElementById('force-sync-btn');
                 const formEl = document.getElementById('auth-form');
 
                 if (Cloud.currentUser && Cloud.currentProfile) {
                     statusEl.innerHTML = `Logged in as <b>${Cloud.currentProfile.username}</b>. Cloud save active.`;
                     statusEl.className = 'auth-status logged-in';
                     toggleBtn.textContent = 'Log Out';
+                    syncBtn.style.display = 'block';
                     formEl.style.display = 'none';
                 } else {
                     statusEl.innerHTML = `Not logged in yet.<br>Progress isn't saved across devices.`;
                     statusEl.className = 'auth-status';
                     toggleBtn.textContent = '🔑 Log In / Sign Up';
+                    syncBtn.style.display = 'none';
                 }
             };
 
@@ -4496,6 +4525,11 @@
                     const formEl = document.getElementById('auth-form');
                     formEl.style.display = formEl.style.display === 'flex' ? 'none' : 'flex';
                 }
+            });
+
+            document.getElementById('force-sync-btn').addEventListener('click', async () => {
+                await Cloud.forceSyncFromCloud();
+                closeSettings();
             });
 
             async function handleAuthAction(action) {
