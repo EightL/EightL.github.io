@@ -62,6 +62,12 @@
             cursor: pointer;
         }
 
+        .screen.hidden {
+            display: none !important;
+            opacity: 0;
+            pointer-events: none;
+        }
+
         #intro-canvas {
             position: absolute;
             inset: 0;
@@ -354,6 +360,10 @@
         .settings-btn:hover {
             background: #3a2010;
             box-shadow: 0 0 8px rgba(245, 200, 66, 0.25);
+        }
+
+        .settings-btn:active {
+            transform: translateY(1px);
         }
 
         .settings-btn.danger {
@@ -2198,7 +2208,7 @@
                 return data;
             }
             init();
-            return { login, signup, logout, syncToCloud: forceSyncToCloud, syncFromCloud, forceSyncFromCloud, fetchProfile, submitScore, getLeaderboard, get currentUser() { return currentUser; }, get currentProfile() { return currentProfile; } };
+            return { login, signup, logout, syncToCloud: forceSyncToCloud, syncFromCloud, forceSyncFromCloud, submitScore, getLeaderboard, get currentUser() { return currentUser; }, get currentProfile() { return currentProfile; } };
         })();
 
         // Expose to window for State.save access if needed
@@ -2270,17 +2280,53 @@
         const Screens = (() => {
             const registry = {};
             let current = null;
+            const screenElements = {}; // Map to store screen DOM elements
 
-            function register(id, onEnter, onLeave) { registry[id] = { onEnter, onLeave }; }
+            function register(id, onEnter, onLeave) {
+                registry[id] = { onEnter, onLeave };
+                screenElements[id] = document.getElementById('screen-' + id);
+            }
 
             function go(id) {
+                const introEl = screenElements['intro'];
+
+                // Handle intro screen visibility specifically
+                if (id === 'intro') {
+                    // Hide all other screens and show intro
+                    for (const key in screenElements) {
+                        if (key !== 'intro') {
+                            screenElements[key]?.classList.add('hidden');
+                            screenElements[key]?.classList.remove('active');
+                        }
+                    }
+                    if (introEl) {
+                        introEl.classList.remove('hidden');
+                        introEl.classList.add('active');
+                    }
+                    current = 'intro';
+                    registry['intro']?.onEnter?.();
+                    return;
+                }
+
+                // If leaving intro, ensure it's hidden
+                if (current === 'intro' && introEl) {
+                    introEl.classList.remove('active');
+                    introEl.classList.add('hidden');
+                    registry['intro']?.onLeave?.();
+                }
+
+                // Standard screen switching logic
                 if (current) {
-                    document.getElementById('screen-' + current)?.classList.remove('active');
+                    screenElements[current]?.classList.remove('active');
                     registry[current]?.onLeave?.();
                 }
+
                 current = id;
-                const el = document.getElementById('screen-' + id);
-                if (el) el.classList.add('active');
+                const el = screenElements[id];
+                if (el) {
+                    el.classList.remove('hidden'); // Ensure it's not hidden by intro logic
+                    el.classList.add('active');
+                }
                 registry[id]?.onEnter?.();
             }
 
@@ -2572,7 +2618,21 @@
                             Drag.start(e, key);
                         });
                         card.addEventListener('touchstart', e => {
-                            e.preventDefault(); // Prevents the tray from stealing the scroll right away
+                            // Prevent default only if it's a vertical scroll attempt
+                            // This allows horizontal scrolling of the tray
+                            const startY = e.touches[0].clientY;
+                            const startX = e.touches[0].clientX;
+                            const handleTouchMove = (moveEvent) => {
+                                const deltaY = Math.abs(moveEvent.touches[0].clientY - startY);
+                                const deltaX = Math.abs(moveEvent.touches[0].clientX - startX);
+                                if (deltaY > deltaX && deltaY > 5) { // If vertical movement is dominant
+                                    moveEvent.preventDefault();
+                                }
+                            };
+                            card.addEventListener('touchmove', handleTouchMove, { passive: false });
+                            card.addEventListener('touchend', () => {
+                                card.removeEventListener('touchmove', handleTouchMove);
+                            });
                         }, { passive: false });
                     }
 
@@ -2600,13 +2660,15 @@
             }
 
             trayBtnLeft.addEventListener('click', () => {
-                if (itemTray.scrollLeft <= 2) return;
+                const currentScroll = Math.floor(itemTray.scrollLeft);
+                if (currentScroll <= 0) return;
                 Audio.sfx.click();
                 itemTray.scrollBy({ left: -140, behavior: 'smooth' });
             });
             trayBtnRight.addEventListener('click', () => {
-                const maxScrollLeft = itemTray.scrollWidth - itemTray.clientWidth;
-                if (itemTray.scrollLeft >= maxScrollLeft - 2) return;
+                const maxScrollLeft = Math.floor(itemTray.scrollWidth - itemTray.clientWidth);
+                const currentScroll = Math.floor(itemTray.scrollLeft);
+                if (currentScroll >= maxScrollLeft - 1) return;
                 Audio.sfx.click();
                 itemTray.scrollBy({ left: 140, behavior: 'smooth' });
             });
@@ -2680,7 +2742,7 @@
 
             function overParrot(cx, cy) {
                 const r = zoneEl.getBoundingClientRect();
-                return cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom;
+                return cx >= r.left && cx <= r.right && cy >= r.top && cy >= r.top + r.height * 0.1 && cy <= r.bottom; // Adjusted to ignore top 10% for better interaction
             }
 
             function relY(cy) {
