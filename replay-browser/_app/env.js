@@ -1,1 +1,1 @@
-export const env={"PUBLIC_SUPABASE_URL":"https://kvvpctdtpffxqihgbedo.supabase.co","PUBLIC_SUPABASE_ANON_KEY":"sb_publishable_Rie2ysBmzlmNXJOk6ajULA_-MSjjnLv","PUBLIC_SUPABASE_STORAGE_BUCKET":"replays"}
+export const env={"PUBLIC_SUPABASE_URL":"https://kvvpctdtpffxqihgbedo.supabase.co","PUBLIC_SUPABASE_ANON_KEY":"sb_publishable_Rie2ysBmzlmNXJOk6ajULA_-MSjjnLv","PUBLIC_SUPABASE_STORAGE_BUCKET":"replay-bundles"}
