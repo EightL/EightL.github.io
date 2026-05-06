@@ -141,12 +141,12 @@ body {
 
 /* Current page layout */
 .current-container {
-  max-width: 720px;
+  max-width: 640px;
   margin: 0 auto;
   padding: 2.5rem 1.75rem 3rem;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 2rem;
   text-align: center;
 }
 
@@ -377,7 +377,120 @@ body {
   opacity: 0.6;
 }
 
+/* LeroCards Expandable Section */
+.lero-section {
+  margin-bottom: 0.8rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease-out;
+}
+
+.lero-section.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.lero-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.2s ease;
+}
+
+.lero-header:hover {
+  opacity: 0.6;
+}
+
+.lero-header .section-title {
+  margin: 0;
+}
+
+.lero-tagline {
+  font-size: 0.8rem;
+  color: #6f6f6f;
+}
+
+/* Container for the expandable canvas */
+.lero-canvas-container {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin-top: 0;
+  transition:
+    max-height 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease,
+    margin-top 0.4s ease;
+}
+
+.lero-canvas-container.expanded {
+  max-height: 560px;
+  opacity: 1;
+  margin-top: 0.5rem;
+}
+
+/* Placeholder shown while iframe loads */
+.lero-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 500px;
+  background: #f5f3f0;
+  border-radius: 12px;
+  border: 1px solid #e5e5e5;
+}
+
+.lero-loading-text {
+  font-size: 0.85rem;
+  color: #6f6f6f;
+}
+
+/* The iframe itself */
+.lero-iframe {
+  width: 100%;
+  height: 500px;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  display: none;
+  background: #f5f3f0;
+}
+
+.lero-iframe.loaded {
+  display: block;
+}
+
+/* Links below canvas */
+.lero-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.4s ease, max-height 0.4s ease, margin 0.4s ease;
+}
+
+.lero-links.visible {
+  opacity: 1;
+  max-height: 40px;
+}
+
+.lero-cta-link {
+  color: #000000;
+  text-decoration: underline;
+  font-size: 0.8rem;
+  transition: opacity 0.3s ease;
+}
+
+.lero-cta-link:hover {
+  opacity: 0.6;
+}
+
 /* Responsive */
+
 @media (max-width: 768px) {
   .minimal-container {
     padding: 1rem;
@@ -415,4 +528,156 @@ body {
   .current-container main {
     gap: 1.8rem;
   }
+}
+
+/* Thesis page — keep it pure text */
+.q {
+  font-size: 0.95rem;
+  margin: 0.2rem 0 0;
+}
+
+.links-row {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.links-row a {
+  color: #000;
+  text-decoration: underline;
+  font-size: 0.95rem;
+}
+
+.links-row a:hover {
+  opacity: 0.6;
+}
+
+/* Chapter heading doubles as the toggle — no separate click/hide text */
+.ch h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1.2rem 0 0 !important;
+  cursor: pointer;
+  user-select: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  transition: opacity 0.2s ease;
+}
+
+.ch h2:hover {
+  opacity: 0.55;
+}
+
+.ch h2::after {
+  content: "+";
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: #6f6f6f;
+  transition: transform 0.25s ease;
+  display: inline-block;
+  width: 0.8rem;
+  text-align: center;
+}
+
+.ch.open h2::after {
+  content: "−";
+}
+
+.t-body {
+  max-width: 600px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin-top: 0;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  transition:
+    max-height 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.4s ease,
+    margin-top 0.4s ease;
+}
+
+.ch.open .t-body {
+  opacity: 1;
+  margin-top: 0.6rem;
+}
+
+.t-body p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0.8rem 0;
+}
+
+.t-body p.cap,
+.t-body p.num {
+  text-align: center;
+  hyphens: none;
+}
+
+.t-body em {
+  font-style: italic;
+}
+
+.t-body a {
+  color: #000;
+  text-decoration: underline;
+}
+
+.t-body a:hover {
+  opacity: 0.6;
+}
+
+.t-body img {
+  max-width: 100%;
+  height: auto;
+  margin: 0.4rem 0 0;
+}
+
+.t-body .cap {
+  font-size: 0.8rem;
+  color: #6f6f6f;
+  margin: 0.3rem 0 1rem;
+  line-height: 1.4;
+}
+
+.t-body .num {
+  font-size: 0.88rem;
+  margin: 0.15rem 0;
+  color: #333;
+  font-variant-numeric: tabular-nums;
+}
+
+.t-body .num em {
+  color: #6f6f6f;
+  font-size: 0.8rem;
+}
+
+/* Tabs — plain underlined text */
+.tabs {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  margin: 0.6rem 0 !important;
+}
+
+.tab {
+  font-size: 0.85rem;
+  color: #6f6f6f;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.tab:hover {
+  color: #000;
+}
+
+.tab.active {
+  color: #000;
+  font-weight: 600;
 }

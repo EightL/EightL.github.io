@@ -78,6 +78,13 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Auto-reveal sections on page load with staggered timing
+  const leroSection = document.querySelector('.lero-section');
+  if (leroSection) {
+    setTimeout(() => {
+      leroSection.classList.add('revealed');
+    }, 200);
+  }
+
   if (projectsSection) {
     setTimeout(() => {
       projectsSection.classList.add('revealed');
@@ -120,6 +127,58 @@ document.addEventListener('DOMContentLoaded', function() {
           progressToggle.style.display = 'inline';
         }, 200);
         isProgressRevealed = false;
+      }
+    });
+  }
+
+  // LeroCards expand/collapse with lazy iframe loading
+  const leroToggle = document.getElementById('lero-toggle');
+  const leroContainer = document.getElementById('lero-canvas-container');
+  const leroPlaceholder = document.getElementById('lero-placeholder');
+  const leroIframe = document.getElementById('lero-iframe');
+  const leroLinks = document.querySelector('.lero-links');
+
+  if (leroToggle && leroContainer && leroIframe && leroPlaceholder) {
+    let isExpanded = false;
+    let iframeLoaded = false;
+    const EMBED_URL = 'https://lerocards.com/embed';
+
+    const loadIframe = () => {
+      if (iframeLoaded) return;
+      iframeLoaded = true;
+      leroIframe.src = EMBED_URL;
+      leroIframe.addEventListener('load', () => {
+        leroPlaceholder.style.display = 'none';
+        leroIframe.classList.add('loaded');
+      });
+    };
+
+    // Listen for resize messages from the embed
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'lero-embed-resize' && event.data.height) {
+        const h = Math.min(Math.max(event.data.height, 400), 700);
+        if (leroIframe.classList.contains('loaded')) {
+          leroIframe.style.height = h + 'px';
+          leroContainer.style.maxHeight = (h + 0) + 'px';
+        }
+      }
+    });
+
+    leroToggle.addEventListener('click', () => {
+      if (!isExpanded) {
+        leroContainer.classList.add('expanded');
+        if (leroLinks) leroLinks.classList.add('visible');
+        leroToggle.querySelector('.section-title').style.transform = 'translateY(-2px)';
+        if (!iframeLoaded) {
+          // Small delay so the expand animation starts before loading
+          setTimeout(loadIframe, 150);
+        }
+        isExpanded = true;
+      } else {
+        leroContainer.classList.remove('expanded');
+        if (leroLinks) leroLinks.classList.remove('visible');
+        leroToggle.querySelector('.section-title').style.transform = 'translateY(0)';
+        isExpanded = false;
       }
     });
   }
