@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Listen for resize messages from the embed
     window.addEventListener('message', (event) => {
       if (event.data && event.data.type === 'lero-embed-resize' && event.data.height) {
-        const h = Math.min(Math.max(event.data.height, 400), 700);
+        const h = Math.min(Math.max(event.data.height, 400), 750);
         if (leroIframe.classList.contains('loaded') && isExpanded) {
           leroIframe.style.height = h + 'px';
           leroContainer.style.maxHeight = h + 'px';

@@ -426,7 +426,7 @@ body {
 }
 
 .lero-canvas-container.expanded {
-  max-height: 560px;
+  max-height: 580px;
   opacity: 1;
   margin-top: 0.5rem;
 }
@@ -487,6 +487,35 @@ body {
 
 .lero-cta-link:hover {
   opacity: 0.6;
+}
+
+/* Wider canvas on larger screens */
+@media (min-width: 768px) {
+  .lero-canvas-container.expanded {
+    max-height: 620px;
+  }
+
+  .lero-placeholder {
+    height: 560px;
+  }
+
+  .lero-iframe {
+    height: 560px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lero-canvas-container.expanded {
+    max-height: 680px;
+  }
+
+  .lero-placeholder {
+    height: 620px;
+  }
+
+  .lero-iframe {
+    height: 620px;
+  }
 }
 
 /* Responsive */
