@@ -17,40 +17,177 @@
     <main>
       <section>
         <h1>Emergent Coalitions in MARL</h1>
-        <p class="lead">Bachelor's thesis explores whether an explicit coalition bonus can unlock better coordination in a grid-world arena.</p>
+        <p class="lead">Bachelor's thesis. Can a small heterogeneous team of RL agents learn to coordinate — not because we told them to, but because the reward made it worth it?</p>
+
+        <p class="q">Do different reward functions produce genuinely different coordination styles, or just shift performance up and down?</p>
+        <p class="q">Do intuitive proxies (focus fire, cohesion, behavioural diversity) actually predict which teams survive?</p>
+        <p class="q">How much of what emerges is reward design, and how much is the environment's mechanics?</p>
+
+        <p class="links-row">
+          <a href="pdfs/Thesis.pdf" target="_blank" rel="noopener">Read the thesis</a>
+          <a href="https://eightl.github.io/replay-browser/" target="_blank" rel="noopener">Replay browser</a>
+        </p>
       </section>
 
-      <section>
-        <h2>Quick Access</h2>
-        <div class="link-stack">
-          <a href="pdfs/Reinforcement-Learning-Theory.pdf" target="_blank" rel="noopener" class="link-card">RL notes</a>
-          <a href="pdfs/Bakalarska_prace_pitch_v2.pdf" target="_blank" rel="noopener" class="link-card">Thesis pitch (draft)</a>
+      <!-- 01. MARL -->
+      <section class="ch">
+        <h2>MARL, briefly</h2>
+        <div class="t-body" id="ch-marl">
+          <p>Multi-agent RL extends single-agent RL to settings where several agents share one environment. Three things get harder at once: <em>non-stationarity</em> (each agent sees the others as part of the environment, and everyone learns at once), <em>credit assignment</em> (one team reward, four agents — who caused it?), and <em>partial observability</em> (agents see only a local window of the map).</p>
+
+          <p><img src="assets/thesis_figures/marl-loop.drawio.png" alt="MARL loop" /></p>
+          <p class="cap">The MARL loop. Joint actions modify a shared environment state.</p>
+
+          <p>Training uses <em>Multi-Agent PPO</em> under the <em>Centralized Training, Decentralized Execution</em> paradigm. A centralized critic sees the full global state during training; each decentralized actor only sees its own local observation. At deployment, the critic is gone — agents act on local information alone.</p>
+
+          <p><img src="assets/thesis_figures/mappo.drawio.png" alt="MAPPO schematic" /></p>
+          <p class="cap">MAPPO data flow. Rollout buffer → local obs to actor, global state to critic → GAE → clipped policy update.</p>
+
+          <p>Agents can share weights. Three variants are compared here: non-shared (independent nets), type-shared (one net per role — the primary setup), and fully shared (one net for everyone).</p>
+
+          <p><img src="assets/thesis_figures/parameter-sharing.png" alt="Parameter sharing" /></p>
+          <p class="cap">Non-shared · type-shared · fully shared. Same brain colour = same network.</p>
+
         </div>
       </section>
 
-      <section>
-        <h2>Thesis / learning progress</h2>
-        <div class="progress-group">
-          <span id="progress-toggle" class="reveal-toggle">Click</span>
-          <div id="progress-details" class="progress-details">
-            <span class="status-note">No interesting results yet!</span>
-            <a href="https://github.com/EightL/RL-basics-exercises" target="_blank" rel="noopener" class="progress-link">Some RL/MARL theory and implementations</a>
-            <div class="video-carousel">
-              <button id="prev-btn" class="carousel-btn">← previous</button>
-              <div class="video-container">
-                <video id="carousel-video" width="100%" max-width="500px" autoplay loop muted style="border-radius: 8px;">
-                  <source src="assets/CoalitionGrid.mp4" type="video/mp4">
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-              <button id="next-btn" class="carousel-btn">next →</button>
-            </div>
-            <span id="progress-hide" class="reveal-toggle">hide</span>
+      <!-- 02. Environment -->
+      <section class="ch">
+        <h2>The environment</h2>
+        <div class="t-body" id="ch-env">
+          <p><em>Knights, Archers, Zombies</em> — a PettingZoo grid-world where knights and archers defend the bottom of the screen from descending zombies. Four agents, two roles, six discrete actions.</p>
+
+          <p>The original version was too easy to solve trivially, so it was customized: boss enemies every 200 steps scale a wave counter that raises zombie/boss HP; a leveling system gives XP and HP per kill so falling behind makes you weaker; and shielded zombies spawn that only knights can break — kill all knights and shielded zombies become unstoppable, which forces mutual dependence.</p>
+
+          <p><img src="assets/thesis_figures/kaz-entities-2.png" alt="Custom KAZ entities" /></p>
+          <p class="cap">Custom KAZ with leveling, shielded zombies, and a boss tier.</p>
+
+          <p>The original PyGame version was too slow for ~328M-frame runs, so the environment was rewritten in <em>JAX</em> as pure functions over immutable state, then jit-compiled and vmap-ed across 256 parallel environments. ~130k FPS on a single GPU; a full training run finishes in under four hours.</p>
+
+          <p><strong>Seven reward schemes.</strong> Mechanics, observations, and termination stay fixed. Only the reward function changes — reward design as the experimental lever.</p>
+
+          <p><strong>Baseline.</strong> Only base kill rewards. Any coordination here comes from environment structure, not incentives.</p>
+          <p><strong>Shared Reward.</strong> 50% of kill rewards pooled between attackers. Archer kill? Nearby swinging knight gets a cut.</p>
+          <p><strong>Egalitarian.</strong> Penalizes XP inequality (Gini) and gives the lowest-XP agent a catch-up bonus.</p>
+          <p><strong>Survival.</strong> Per-step alive bonus plus a −2.0 hit to everyone when a teammate dies.</p>
+          <p><strong>Coalition.</strong> 70% of a kill is shared with alive allies within 200 px. Explicit spatial coalition bonus.</p>
+          <p><strong>Zero-Sum.</strong> Killer gains, other agents split an equal penalty. Helping a teammate hurts you.</p>
+          <p><strong>Territorial.</strong> Screen split in half. Archers own left, knights right. Bonus inside your lane, penalty outside.</p>
+
+          <p><img src="assets/thesis_figures/base-shared-egal-surv.png" alt="Baseline, Shared, Egalitarian, Survival" /></p>
+          <p class="cap">Baseline · Shared · Egalitarian · Survival. Arrows = attacks; red = killing blow.</p>
+
+          <p><img src="assets/thesis_figures/coal-zero-terr.png" alt="Coalition, Zero-Sum, Territorial" /></p>
+          <p class="cap">Coalition · Zero-Sum · Territorial.</p>
+
+        </div>
+      </section>
+
+      <!-- 03. Metrics -->
+      <section class="ch">
+        <h2>Measuring what emerged</h2>
+        <div class="t-body" id="ch-metrics">
+          <p>Two teams can reach the same total reward through completely different social structures. Reward curves can't distinguish them. So: twelve post-hoc metrics on evaluation trajectories, grouped into three themes.</p>
+
+          <p><em>Spatial structure.</em> Clustering coefficient (pairs within 200 px), formation score (knights in front of archers?), role separation (distance between role centroids), coalition lifetime median (how long pairs stay within 350 px).</p>
+
+          <p><img src="assets/thesis_figures/metrics-1.png" alt="Spatial metrics" /></p>
+          <p class="cap">Clustering · formation · role separation, visualized on a single frame.</p>
+
+          <p><em>Coordination &amp; engagement.</em> Focus fire score (multiple agents targeting the same enemy?), System Neural Diversity (JS divergence between agents' action distributions), knight close-commit rate (do knights commit when close?).</p>
+
+          <p><em>Protection &amp; balance.</em> Unsupported archer exposure, survival ratio per role, knight HP bleed rate, Gini coefficient of late-episode XP.</p>
+
+          <p>A custom <a href="https://eightl.github.io/replay-browser/" target="_blank" rel="noopener">replay browser</a> (SvelteKit) complements these — frame-by-frame playback with toggleable metric overlays, mostly used to sanity-check that each metric actually matched the behaviour it claimed to measure.</p>
+
+        </div>
+      </section>
+
+      <!-- 04. Analysis -->
+      <section class="ch">
+        <h2>Training &amp; analysis</h2>
+        <div class="t-body" id="ch-analysis">
+          <p>Seven reward policies × five seeds × type-shared parameters × 400 px vision → 35 primary runs, plus 35 unlimited-vision runs, 70 across alternative parameter-sharing paradigms, and 35 for an environment ablation. Each run: 10 000 MAPPO updates, 256 parallel environments, ~328M frames.</p>
+
+          <p><strong>Pick a policy.</strong> Each reward scheme produced a measurably different coordination regime.</p>
+
+          <p class="tabs">
+            <span class="tab p-tab active" data-policy="survival">Survival</span>
+            <span class="tab p-tab" data-policy="shared">Shared Reward</span>
+            <span class="tab p-tab" data-policy="coalition">Coalition</span>
+            <span class="tab p-tab" data-policy="baseline">Baseline</span>
+            <span class="tab p-tab" data-policy="egalitarian">Egalitarian</span>
+            <span class="tab p-tab" data-policy="zerosum">Zero-Sum</span>
+            <span class="tab p-tab" data-policy="territorial">Territorial</span>
+          </p>
+
+          <div id="policy-pane">
+            <p id="policy-blurb"></p>
+            <p class="cap" id="policy-stats"></p>
           </div>
+
+          <p><strong>Results.</strong></p>
+          <p class="tabs">
+            <span class="tab r-tab active" data-result="final">Final bars</span>
+            <span class="tab r-tab" data-result="training">Training curves</span>
+            <span class="tab r-tab" data-result="vision">Vision radius</span>
+            <span class="tab r-tab" data-result="param">Param-sharing</span>
+          </p>
+          <p><img id="result-img" src="assets/thesis_figures/2.png" alt="Seven-policy comparison" /></p>
+          <p class="cap" id="result-cap">Final deterministic evaluation — 12 metrics, 7 policies, 5 seeds each. Bars = mean, error bars = std.</p>
+
+          <p><strong>Centroid heatmaps.</strong> Where does the team's centre of mass spend its time?</p>
+          <p><img src="assets/thesis_figures/selected_policy_centroid_heatmaps_shared.png" alt="Centroid heatmaps" /></p>
+          <p class="cap">Survival holds a wide horizontal band deep in the map. Coalition stays compact up top. Baseline and Zero-Sum are near-identical. Territorial never lands a clean split.</p>
+
+          <p><strong>What actually predicts durability.</strong> Spearman correlation with episode length, across all seed-level evaluations:</p>
+          <p class="num">knight survival ratio &nbsp; +0.83</p>
+          <p class="num">focus fire score &nbsp; −0.80</p>
+          <p class="num">Gini coefficient &nbsp; +0.75</p>
+          <p class="num">knight HP bleed rate &nbsp; −0.69</p>
+          <p class="num">knight close-commit rate &nbsp; +0.63</p>
+          <p class="num">unsupported archer exposure &nbsp; −0.60</p>
+
+          <p>Focus fire and SND — the first things you'd guess would predict coordination — are <em>negatively</em> correlated with episode length. The strongest predictor is knight survival. After removing between-policy variance, spatial metrics lose all significance. What carries team durability is knight-side burden management, not surface coordination signals.</p>
+
+          <p><strong>The twist: archers can break shields.</strong> If knight-survival dominance is real, it should weaken when archers can also break shields. All seven policies re-trained under that rule:</p>
+          <p class="num">Shared Reward &nbsp; 608.8 → 668.3 &nbsp; <em>now best</em></p>
+          <p class="num">Coalition &nbsp; 583.3 → 633.8</p>
+          <p class="num">Territorial &nbsp; 431.7 → 525.2 &nbsp; <em>biggest gain</em></p>
+          <p class="num">Survival &nbsp; 701.1 → 572.9 &nbsp; <em>loses its lead</em></p>
+
+          <p>The same reward functions produce different spatial organizations under different environment rules. Survival's separated frontline-backline style was an adaptation to the shield asymmetry — not an inherently better coordination regime.</p>
+
+          <p><strong>Cross-play &amp; leave-one-out.</strong> Swap archers from one policy with knights from another: 41 of 42 off-diagonal pairings perform worse than self-play. These regimes are genuinely distinct, not interchangeable. Remove one agent, measure the drop:</p>
+          <p class="num">Survival — knight removed &nbsp; −451 steps</p>
+          <p class="num">Shared Reward — knight removed &nbsp; −360</p>
+          <p class="num">Coalition — knight removed &nbsp; −321</p>
+          <p class="num">Territorial — knight removed &nbsp; −122</p>
+          <p class="num">Shared Reward — archer removed &nbsp; −2</p>
+          <p class="num">Zero-Sum — archer removed &nbsp; −4</p>
+
+          <p>Every policy is knight-critical. Archer importance depends strongly on the regime.</p>
+
+        </div>
+      </section>
+
+      <!-- 05. Conclusion -->
+      <section class="ch">
+        <h2>What this actually means</h2>
+        <div class="t-body" id="ch-conclusion">
+          <p>Reward design doesn't just shift performance — it selects which coordination regime stabilizes. Survival found a separated frontline-backline. Coalition packed tight. Shared Reward became aggressively spatially spread. Each is competitive through a different mechanism.</p>
+
+          <p>The intuitive proxies — focus fire, behavioural diversity, spatial cohesion — describe <em>which</em> regime a policy occupies, not how well it performs. What carries durability is knight-side burden management. And that itself only holds because of a specific environment asymmetry; relax it and the best regime shifts.</p>
+
+          <p>Type-shared parameters beat both alternatives for every reward scheme. Limited vision (400 px) helped five out of seven policies — more information is not always better; often it's just noise that distracts from the local decisions that matter.</p>
+
+          <p>For the full story — RL foundations, MAPPO derivations, hypothesis evaluation, ablations, and limitations — <a href="pdfs/Thesis.pdf" target="_blank" rel="noopener">read the thesis</a>.</p>
+
         </div>
       </section>
     </main>
+  </div>
 
-  <script src="js/index-minimal.js"></script>
+  <script src="js/current-minimal.js"></script>
 </body>
 </html>
