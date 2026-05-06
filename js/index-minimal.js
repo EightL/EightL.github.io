@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (leroToggle && leroContainer && leroIframe && leroPlaceholder) {
     let isExpanded = false;
     let iframeLoaded = false;
-    const EMBED_URL = 'https://lerocards.com/embed';
+    const EMBED_URL = 'https://www.lerocards.com/embed';
 
     const loadIframe = () => {
       if (iframeLoaded) return;
@@ -157,9 +157,9 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('message', (event) => {
       if (event.data && event.data.type === 'lero-embed-resize' && event.data.height) {
         const h = Math.min(Math.max(event.data.height, 400), 700);
-        if (leroIframe.classList.contains('loaded')) {
+        if (leroIframe.classList.contains('loaded') && isExpanded) {
           leroIframe.style.height = h + 'px';
-          leroContainer.style.maxHeight = (h + 0) + 'px';
+          leroContainer.style.maxHeight = h + 'px';
         }
       }
     });
@@ -170,12 +170,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (leroLinks) leroLinks.classList.add('visible');
         leroToggle.querySelector('.section-title').style.transform = 'translateY(-2px)';
         if (!iframeLoaded) {
-          // Small delay so the expand animation starts before loading
           setTimeout(loadIframe, 150);
+        } else {
+          // Re-show iframe in case it was hidden during collapse
         }
         isExpanded = true;
       } else {
         leroContainer.classList.remove('expanded');
+        leroContainer.style.maxHeight = '';
+        leroIframe.style.height = '';
         if (leroLinks) leroLinks.classList.remove('visible');
         leroToggle.querySelector('.section-title').style.transform = 'translateY(0)';
         isExpanded = false;
