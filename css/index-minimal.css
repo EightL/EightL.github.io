@@ -492,60 +492,33 @@ body {
 
 /* Wider canvas on larger screens */
 @media (min-width: 768px) {
-  .lero-canvas-container,
-  .lero-iframe.loaded {
-    width: 85vw;
-    margin-left: calc((100% - 85vw) / 2);
-  }
-
   .lero-canvas-container.expanded {
-    max-height: 600px;
+    max-height: 580px;
   }
 
-  .lero-placeholder {
-    height: 540px;
-  }
-
+  .lero-placeholder,
   .lero-iframe {
-    height: 540px;
+    height: 520px;
   }
 }
 
 @media (min-width: 1024px) {
-  .lero-canvas-container,
-  .lero-iframe.loaded {
-    width: 75vw;
-    margin-left: calc((100% - 75vw) / 2);
-  }
-
   .lero-canvas-container.expanded {
-    max-height: 660px;
+    max-height: 650px;
   }
 
-  .lero-placeholder {
-    height: 600px;
-  }
-
+  .lero-placeholder,
   .lero-iframe {
-    height: 600px;
+    height: 590px;
   }
 }
 
 @media (min-width: 1400px) {
-  .lero-canvas-container,
-  .lero-iframe.loaded {
-    width: 65vw;
-    margin-left: calc((100% - 65vw) / 2);
-  }
-
   .lero-canvas-container.expanded {
     max-height: 720px;
   }
 
-  .lero-placeholder {
-    height: 660px;
-  }
-
+  .lero-placeholder,
   .lero-iframe {
     height: 660px;
   }
