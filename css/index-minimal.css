@@ -212,21 +212,6 @@ body {
   -webkit-hyphens: auto;
 }
 
-.eq {
-  margin: 0.35rem 0 0.6rem;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  text-align: left;
-  width: 100%;
-  max-width: 600px;
-}
-
-.eq-label {
-  font-family: "Inter", sans-serif;
-  font-weight: 600;
-  margin-right: 0.35rem;
-}
-
 .link-stack {
   display: flex;
   flex-direction: column;
@@ -332,51 +317,22 @@ body {
 }
 
 /* Projects List */
-.projects-section {
-  gap: 1.1rem;
-}
-
-.projects-block {
+.projects-list {
   display: flex;
   flex-direction: column;
+  gap: 0.2rem;
   align-items: center;
-  gap: 0.4rem;
 }
 
-.projects-links {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.35rem 1.2rem;
-  width: 100%;
-  max-width: 520px;
-}
-
-.projects-links.school-links {
-  grid-template-columns: 1fr;
-  max-width: 360px;
-}
-
-.projects-links a {
+.projects-list a {
   color: #000000;
   text-decoration: underline;
   font-size: 0.8rem;
   transition: opacity 0.3s ease;
-  text-align: center;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  width: 100%;
 }
 
-.projects-links a:hover {
+.projects-list a:hover {
   opacity: 0.6;
-}
-
-.mc-icon {
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
 }
 
 /* Research Link */

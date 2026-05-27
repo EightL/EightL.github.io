@@ -6,11 +6,7 @@
   <title>MARL Research | Martin Ševčík</title>
   <link rel="preconnect" href="https://fonts.gstatic.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
   <link rel="stylesheet" href="css/index-minimal.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-    onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
 </head>
 <body>
   <div class="minimal-container current-container">
@@ -21,14 +17,13 @@
     <main>
       <section>
         <h1>Emergent Coalitions in MARL</h1>
-        <p class="lead">This Bachelor's thesis investigates whether agents in a <em>multi-agent reinforcement learning</em> environment can form <em>coalitions</em>, coordinate with each other based on <em>reward schemes</em>, environment mechanics such as vision radius, or learning mechanics such as different parameter sharing paradigms.</p>
-        <p class="lead">We ask hypotheses such as: do different reward functions produce genuinely <em>different coordination styles</em>, or just shift performance. Do <em>intuitive proxies</em> (focus fire, cohesion, behavioural diversity) actually predict which teams survive. How much of what emerges is <em>reward design</em>, and how much is the environment's mechanics?</p>
-        <p class="lead">How do we measure and evaluate the emergence of coalitions in MARL settings? We develop a <em>quantitative metrics framework</em> covering spatial structure, attack coordination, behavioral differentiation, and fairness. A single metric cannot tell the whole story, therefore to capture aspects of agent's behavior, we <em>interpret these metrics together</em>.</p>
-        <p class="lead">A <em>Replay Browser</em> was also built to visualize independent episode replays for more qualitative and intuitive interpretation.</p>
+        <p class="lead">This Bachelor's thesis investigates whether agents in a multi-agent reinforcement learning environment can form coalitions, coordinate with each other based on reward schemes, environment mechanics such as vision radius, or learning mechanics such as different parameter sharing paradigms.</p>
+        <p class="lead">We ask hypotheses such as: do different reward functions produce genuinely different coordination styles, or just shift performance. Do intuitive proxies (focus fire, cohesion, behavioural diversity) actually predict which teams survive. How much of what emerges is reward design, and how much is the environment's mechanics?</p>
+        <p class="lead">How do we measure and evaluate the emergence of coalitions in MARL settings? We develop a quantitative metrics framework covering spatial structure, attack coordination, behavioral differentiation, and fairness. A single metric cannot tell the whole story, therefore to capture aspects of agent's behavior, we interpret these metrics together.</p>
+        <p class="lead">A Replay Browser was also built to visualize independent episode replays for more qualitative and intuitive interpretation.</p>
 
         <p class="links-row">
           <a href="pdfs/Thesis.pdf" target="_blank" rel="noopener">Read the thesis</a>
-          <a href="https://eightl.github.io/emergent-coalitions-marl-report" target="_blank" rel="noopener">See report</a>
           <a href="https://eightl.github.io/replay-browser/" target="_blank" rel="noopener">Replay browser</a>
         </p>
       </section>
@@ -94,16 +89,13 @@
           <p>Two teams can reach similar total reward while using different coordination structures. Reward curves alone cannot distinguish this. Therefore we evaluate trained policies using twelve post-hoc metrics on evaluation trajectories, grouped into three areas.</p>
 
           <p><em>Spatial structure.</em> We measure clustering coefficient (pairs within 200 px), formation score (are knights in front of archers?), role separation (distance between role centroids), and coalition lifetime median (how long pairs stay within 350 px).</p>
-          <p class="eq"><span class="eq-label">Clustering coefficient.</span> \( C_t = \frac{1}{|P_t|} \sum_{(i,j) \in P_t} \mathbf{1}\{ \lVert \mathbf{p}_i(t)-\mathbf{p}_j(t)\rVert_2 < r_c \} \)</p>
 
           <p><img src="assets/thesis_figures/metrics-1.png?v=20260527-2" alt="Spatial metrics" /></p>
           <p class="cap">Clustering · formation · role separation, visualized on a single frame.</p>
 
           <p><em>Coordination &amp; engagement.</em> We measure focus fire score (are multiple agents attacking the same enemy?), System Neural Diversity (JS divergence between action distributions), and knight close-commit rate (do knights commit when close?).</p>
-          <p class="eq"><span class="eq-label">Focus fire.</span> \( FF_t = \frac{1}{|T_t|} \sum_{i \in T_t} \mathrm{coord}_i(t) \)</p>
 
           <p><em>Protection &amp; balance.</em> We measure unsupported archer exposure, survival ratio per role, knight HP bleed rate, and Gini coefficient of late-episode XP.</p>
-          <p class="eq"><span class="eq-label">Survival ratio.</span> \( SR_{\mathcal{C}} = \frac{1}{T|\mathcal{C}|} \sum_{t=1}^{T} \sum_{i \in \mathcal{C}} \mathbf{1}\{\mathrm{alive}_i(t)\} \)</p>
 
           <p>A custom <a href="https://eightl.github.io/replay-browser/" target="_blank" rel="noopener">replay browser</a> complements these metrics. It allows frame-by-frame playback with metric overlays, so quantitative results can be compared with what agents actually do in the environment.</p>
 
