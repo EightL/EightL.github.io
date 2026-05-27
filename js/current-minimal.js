@@ -34,31 +34,31 @@ document.addEventListener('DOMContentLoaded', () => {
   // ---------- Policy selector ----------
   const policyData = {
     survival: {
-      blurb: "The most structured policy. Knights absorb pressure up front, archers fire from behind. Highest formation score and role separation in the set, lowest unsupported archer exposure. Picks fights rather than maximizing attack volume — and lasts the longest.",
+      blurb: "Survival produces the most structured regime. Knights absorb pressure in front while archers stay behind them. It has the highest formation score and role separation, and the lowest unsupported archer exposure. This suggests that the policy learns to preserve roles instead of maximizing attack volume.",
       stats: "701.1 ± 6.0 steps · formation 0.974 · −451 steps when a knight is removed",
     },
     shared: {
-      blurb: "Low clustering, high formation, highest knight close-commit rate. Archers shoot from the back while knights press aggressively near the top. Different style from Coalition but similar performance — and the most architecture-robust of all seven.",
+      blurb: "Shared Reward produces low clustering, high formation, and the highest knight close-commit rate. Archers shoot from the back while knights press near the top. The style is different from Coalition, but performance is similar, therefore reward sharing does not imply one fixed spatial structure.",
       stats: "608.8 ± 63.6 steps · knight close-commit 0.153 · clustering 0.177",
     },
     coalition: {
-      blurb: "The most compact policy. Highest clustering, lowest role separation, and by far the longest coalition lifetime median (51.7 steps). Agents stick together persistently — density and temporal cohesion as a strategy.",
+      blurb: "Coalition produces the most compact policy. It has the highest clustering, lowest role separation, and by far the longest coalition lifetime median. Agents stay together persistently, so spatial density and temporal cohesion become the main behavior.",
       stats: "583.3 ± 22.7 steps · clustering 0.593 · coalition lifetime 51.7 steps",
     },
     baseline: {
-      blurb: "Only base kill rewards. Any coordination that shows up here comes from environment structure, not incentives. Behaves near-identically to Zero-Sum — the cooperative task absorbs the competitive signal.",
+      blurb: "Baseline uses only base kill rewards. Any coordination that appears here therefore comes from environment structure, not explicit incentives. It behaves almost the same as Zero-Sum, which suggests that the cooperative pressure of the task absorbs the competitive signal.",
       stats: "556.3 ± 28.2 steps · formation 0.841 · focus fire 0.042",
     },
     egalitarian: {
-      blurb: "Achieves its design goal — lowest late-episode Gini coefficient by a wide margin — but forced equalization leaves archers idle rather than firing from protected positions. Breaks the durable role structure the stronger policies rely on.",
+      blurb: "Egalitarian achieves its design goal by producing the lowest late-episode Gini coefficient. However, forced equalization also leaves archers idle instead of firing from protected positions. This breaks the durable role structure used by stronger policies.",
       stats: "552.8 ± 31.9 steps · Gini 0.033 · archer survival 0.611",
     },
     zerosum: {
-      blurb: "Competitive reward transfer — killer gains, others lose — yet results near-indistinguishable from Baseline. The cooperative pressure of the environment neutralizes the competitive component.",
+      blurb: "Zero-Sum gives reward to the killer and penalty to the other agents. This should create competition, but the results are almost indistinguishable from Baseline. The environment mechanics seem to neutralize the competitive component.",
       stats: "534.4 ± 81.3 steps · focus fire 0.039 · −4 steps when an archer is removed",
     },
     territorial: {
-      blurb: "Archers own the left half, knights the right. The split is initially followed, but shielded zombies spawn across the full arena, so knights cross the border. The formation spirals into confusion — highest focus fire, shortest episodes.",
+      blurb: "Territorial assigns archers to the left half and knights to the right half. The split is followed at first, but shielded zombies spawn across the full arena, so knights must cross the border. The intended spatial rule conflicts with the environment mechanics.",
       stats: "431.7 ± 62.7 steps · focus fire 0.132 · knight survival 0.756",
     },
   };
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultData = {
     final: {
       src: 'assets/thesis_figures/2.png',
-      cap: 'Final deterministic evaluation — 12 metrics, 7 policies, 5 seeds each. Bars = mean, error bars = std.',
+      cap: 'Final deterministic evaluation: 12 metrics, 7 policies, 5 seeds each. Bars = mean, error bars = std.',
     },
     training: {
       src: 'assets/thesis_figures/3.png',
@@ -96,11 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     vision: {
       src: 'assets/thesis_figures/0.png',
-      cap: 'Limited (400 px) vs unlimited vision. Five of seven policies prefer limited vision — more information often just adds noise.',
+      cap: 'Limited (400 px) vs unlimited vision. Five of seven policies perform better with limited vision, therefore more information is not always better.',
     },
     param: {
       src: 'assets/thesis_figures/1.png',
-      cap: 'Type-shared (TS), non-shared (SEP), fully shared (SH). Type-shared wins for every policy.',
+      cap: 'Type-shared (TS), non-shared (SEP), fully shared (SH). Type-shared parameters perform best for every reward scheme.',
     },
   };
 

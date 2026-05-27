@@ -37,22 +37,36 @@
 
     <!-- Featured Project: LeroCards -->
     <div class="lero-section">
-      <div class="lero-header" id="lero-toggle">
-        <h2 class="section-title">LeroCards</h2>
-      </div>
-      <div class="lero-links" id="lero-links-top">
-        <a href="https://lerocards.com" target="_blank" rel="noopener" class="lero-cta-link">This is a demo, try LeroCards</a>
-      </div>
-      <div class="lero-canvas-container" id="lero-canvas-container">
-        <div class="lero-placeholder" id="lero-placeholder">
-          <span class="lero-loading-text">Loading demo&hellip;</span>
+      <div class="lero-demo-block">
+        <div class="lero-demo-top">
+          <div class="lero-header">
+            <h2 class="section-title">
+              <button class="lero-title-button" id="lero-title-toggle" type="button" aria-label="Hide LeroCards demo" disabled>
+                LeroCards
+                <span class="lero-title-arrow" aria-hidden="true">↑</span>
+              </button>
+            </h2>
+            <button class="lero-logo-button" id="lero-toggle" type="button" aria-label="Show LeroCards demo">
+              <img src="assets/lero.svg" alt="LeroCards" class="lero-logo" />
+            </button>
+          </div>
+          <div class="lero-links" id="lero-links-top">
+            <a href="https://lerocards.com" target="_blank" rel="noopener" class="lero-cta-link">This is a demo, try LeroCards</a>
+          </div>
         </div>
-        <iframe
-          id="lero-iframe"
-          title="LeroCards interactive demo"
-          class="lero-iframe"
-          allow="clipboard-write"
-        ></iframe>
+        <div class="lero-canvas-container" id="lero-canvas-container">
+          <div class="lero-demo-frame">
+            <div class="lero-placeholder" id="lero-placeholder">
+              <span class="lero-loading-text">Loading demo&hellip;</span>
+            </div>
+            <iframe
+              id="lero-iframe"
+              title="LeroCards interactive demo"
+              class="lero-iframe"
+              allow="clipboard-write"
+            ></iframe>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -73,7 +87,7 @@
 
     <!-- Research Section -->
     <div class="research-section">
-      <h2 class="section-title">Research</h2>
+      <h2 class="section-title">Thesis / Research</h2>
       <a href="current.html" class="research-link">MARL emergent coalitions</a>
     </div>
 

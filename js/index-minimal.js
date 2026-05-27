@@ -133,12 +133,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // LeroCards expand/collapse with lazy iframe loading
   const leroToggle = document.getElementById('lero-toggle');
+  const leroTitleToggle = document.getElementById('lero-title-toggle');
+  const leroDemoBlock = document.querySelector('.lero-demo-block');
   const leroContainer = document.getElementById('lero-canvas-container');
   const leroPlaceholder = document.getElementById('lero-placeholder');
   const leroIframe = document.getElementById('lero-iframe');
   const leroLinks = document.querySelector('.lero-links');
 
-  if (leroToggle && leroContainer && leroIframe && leroPlaceholder) {
+  if (leroToggle && leroTitleToggle && leroDemoBlock && leroContainer && leroIframe && leroPlaceholder) {
     let isExpanded = false;
     let iframeLoaded = false;
     const EMBED_URL = 'https://www.lerocards.com/embed';
@@ -146,11 +148,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadIframe = () => {
       if (iframeLoaded) return;
       iframeLoaded = true;
-      leroIframe.src = EMBED_URL;
-      leroIframe.addEventListener('load', () => {
-        leroPlaceholder.style.display = 'none';
+      const revealIframe = () => {
+        leroPlaceholder.hidden = true;
         leroIframe.classList.add('loaded');
+      };
+      leroIframe.addEventListener('load', () => {
+        revealIframe();
       });
+      leroIframe.src = EMBED_URL;
+      setTimeout(revealIframe, 1500);
+    };
+
+    const scheduleIframePreload = () => {
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(loadIframe, { timeout: 2000 });
+      } else {
+        setTimeout(loadIframe, 1200);
+      }
     };
 
     // Listen for resize messages from the embed
@@ -164,26 +178,57 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
 
-    leroToggle.addEventListener('click', () => {
-      if (!isExpanded) {
-        leroContainer.classList.add('expanded');
-        if (leroLinks) leroLinks.classList.add('visible');
-        leroToggle.querySelector('.section-title').style.transform = 'translateY(-2px)';
-        if (!iframeLoaded) {
-          setTimeout(loadIframe, 150);
-        } else {
-          // Re-show iframe in case it was hidden during collapse
-        }
-        isExpanded = true;
-      } else {
-        leroContainer.classList.remove('expanded');
-        leroContainer.style.maxHeight = '';
-        leroIframe.style.height = '';
-        if (leroLinks) leroLinks.classList.remove('visible');
-        leroToggle.querySelector('.section-title').style.transform = 'translateY(0)';
-        isExpanded = false;
+    const centerLeroDemo = () => {
+      const rect = leroContainer.getBoundingClientRect();
+      const iframeHeight = leroIframe.getBoundingClientRect().height;
+      const placeholderHeight = leroPlaceholder.getBoundingClientRect().height;
+      const demoHeight = Math.max(iframeHeight, placeholderHeight, rect.height);
+      const visibleHeight = Math.min(demoHeight, window.innerHeight * 0.86);
+      const targetY = window.scrollY + rect.top - ((window.innerHeight - visibleHeight) / 2);
+
+      window.scrollTo({
+        top: Math.max(0, targetY),
+        behavior: 'smooth'
+      });
+    };
+
+    const expandLeroDemo = () => {
+      if (isExpanded) return;
+
+      leroContainer.classList.add('expanded');
+      leroDemoBlock.classList.add('expanded');
+      if (leroLinks) leroLinks.classList.add('visible');
+      leroToggle.classList.add('hidden');
+      leroTitleToggle.classList.add('expanded');
+      leroTitleToggle.disabled = false;
+      if (!iframeLoaded) {
+        setTimeout(loadIframe, 150);
       }
+      isExpanded = true;
+      setTimeout(centerLeroDemo, 120);
+    };
+
+    const collapseLeroDemo = () => {
+      if (!isExpanded) return;
+
+      leroContainer.classList.remove('expanded');
+      leroDemoBlock.classList.remove('expanded');
+      leroContainer.style.maxHeight = '';
+      leroIframe.style.height = '';
+      if (leroLinks) leroLinks.classList.remove('visible');
+      leroToggle.classList.remove('hidden');
+      leroTitleToggle.classList.remove('expanded');
+      leroTitleToggle.disabled = true;
+      isExpanded = false;
+    };
+
+    leroToggle.addEventListener('click', expandLeroDemo);
+
+    leroTitleToggle.addEventListener('click', () => {
+      if (isExpanded) collapseLeroDemo();
     });
+
+    scheduleIframePreload();
   }
 
   // Video carousel on current page

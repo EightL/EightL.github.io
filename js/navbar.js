@@ -7,7 +7,6 @@
     'learning.html': 'RL Learning Progress',
     'products.html': 'ClipAI',
     'interpres.html': 'Interpres',
-    'marl.html': 'MARL Basics',
     '': 'Martin Ševčík'
   };
 
@@ -40,8 +39,6 @@
             <a href="current.html" data-nav="research">Research</a>
             <div class="dropdown">
               <a href="current.html">Thesis</a>
-              <a href="learning.html">RL Basics</a>
-              <a href="marl.html">MARL Basics</a>
             </div>
           </li>
           <li class="has-dropdown">
